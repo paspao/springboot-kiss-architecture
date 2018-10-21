@@ -1,0 +1,6 @@
+.idea
+.idea/*.xml
+*/target
+*/node
+*/node_modules
+*/dist
