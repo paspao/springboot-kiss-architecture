@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.ska.api.util.UtilsWeb;
+import org.ska.api.web.beans.ErrorMessage;
 import org.ska.business.ContactService;
 import org.ska.dao.entity.Contact;
 import org.slf4j.Logger;
@@ -19,10 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -48,7 +46,7 @@ public class ContactController {
 	
 	@RequestMapping(value ="/all",produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
 	public @ResponseBody
-	ResponseEntity<?>getAllModulo(){
+	ResponseEntity<?>getAllContacts(){
 		ResponseEntity<?> responseEntity=null;
 		List<Contact> contactList = null;
 		contactList = contactService.findAll();
@@ -61,6 +59,26 @@ public class ContactController {
 		}
 		return responseEntity;
 	}
+
+
+	@ApiOperation(value = "Save contact", response = Contact.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 500, message = "Contact saving error",response= ErrorMessage.class)
+	})
+
+	@RequestMapping(value ="/save",produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.POST)
+	public @ResponseBody
+	ResponseEntity<?>saveContact(@RequestBody Contact contact){
+		ResponseEntity<?> responseEntity=null;
+
+		Contact insertedContact=contactService.createContact(contact);
+
+		responseEntity = new ResponseEntity<Contact>(insertedContact, HttpStatus.OK);
+
+		return responseEntity;
+	}
+
+
 
 
 }

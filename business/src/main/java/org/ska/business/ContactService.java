@@ -15,8 +15,6 @@ import java.util.Optional;
 @Transactional
 public class ContactService {
 
-	
-	
 	@Autowired
 	private ContactDao contactDao;
 
@@ -40,24 +38,24 @@ public class ContactService {
 
 
 
-	public Contact createModulo(Contact contact) {
+	public Contact createContact(Contact contact) {
 		Contact mod=null;
-
+		contact.setId(null);
+		mod=contactDao.save(contact);
 		return mod;
 
 	}
-	public Contact saveModulo(Contact contact) throws KissBusinessException {
-		Contact mod=null;
-		Optional<Contact> moduloOptional= contactDao.findById(contact.getId());
-		if(!moduloOptional.isPresent())
-			throw new KissBusinessException("Contact non creato in precedenza");
 
-		mod= contactDao.save(contact);
+	public Contact updateContact(Contact contact) throws KissBusinessException {
+		Contact mod=null;
+		if(contact.getId()==null)
+			throw new KissBusinessException("Id required");
+		mod=contactDao.save(contact);
 		return mod;
-		
+
 	}
 	
-	public void deleteModulo(Integer moduloId) {
+	public void deleteContct(Integer moduloId) {
     	
     	contactDao.deleteById(moduloId);
     	

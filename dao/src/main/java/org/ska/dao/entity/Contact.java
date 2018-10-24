@@ -13,37 +13,27 @@ public class Contact {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Integer id;
-	@Column(length=32, name = "NOME")
+	@Column(length=32, name = "NAME")
 	private String firstName;// Nome
-	@Column(length=25, name = "PROVINCIA_NASCITA")
+	@Column(length=25, name = "PROVINCIA")
 	private String province;// Provincia di nascita
-	@Column(length=25, name = "COMUNE_NASCITA")
+	@Column(length=25, name = "COMUNE")
 	private String birthPlace;// Comune di nascita
-	@Column(length=32, name = "COGNOME")
+	@Column(length=32, name = "SURNAME")
 	private String lastName;// Cognome
-	@Column(name = "DATA_NASCITA")
+	@Column(name = "BIRTH_DATE")
 	@JsonFormat(pattern="dd-MM-yyyy")
 	private LocalDate dateOfBirth;// Data di nascita
-	@Column(length=20, name = "NAZIONE_NASCITA")
+	@Column(length=20, name = "NATION")
 	private String country;// Nazione di nascita
-	@Column(length=10, name = "SESSO")
+	@Column(length=1, name = "SEX")
 	private String gender;// Sesso
-	@Column(length=50, name = "CODICE_FISCALE")
+	@Column(length=50, name = "FISCAL_CODE")
 	private String fiscalCode;// Codice fiscale
-	@Column(length=20, name = "TELEFONO")
+	@Column(length=20, name = "PHONE")
 	private String phoneNumber;// Telefono
 	@Column(length=50, name = "EMAIL")
 	private String email;// Email
-	@Column(length=50, name = "PROVINCIA_RESIDENZA")
-	private String provinceOfresidence;// Provincia di residenca
-	@Column(length=30)
-	private String municipality;// Comune di residenca
-	@Column(length=50, name = "VIA_RESIDENZA")
-	private String street;// Via
-	@Column(length=5, name = "CIVICO_RESIDENZA")
-	private int streetNumber;// N Civico
-	@Column(length=20, name = "CAP_RESIDENZA")
-	private int postalCode;// CAP
 
 	public Integer getId() {
 		return id;
@@ -133,45 +123,6 @@ public class Contact {
 		this.email = email;
 	}
 
-	public String getProvinceOfresidence() {
-		return provinceOfresidence;
-	}
-
-	public void setProvinceOfresidence(String provinceOfresidence) {
-		this.provinceOfresidence = provinceOfresidence;
-	}
-
-	public String getMunicipality() {
-		return municipality;
-	}
-
-	public void setMunicipality(String municipality) {
-		this.municipality = municipality;
-	}
-
-	public String getStreet() {
-		return street;
-	}
-
-	public void setStreet(String street) {
-		this.street = street;
-	}
-
-	public int getStreetNumber() {
-		return streetNumber;
-	}
-
-	public void setStreetNumber(int streetNumber) {
-		this.streetNumber = streetNumber;
-	}
-
-	public int getPostalCode() {
-		return postalCode;
-	}
-
-	public void setPostalCode(int postalCode) {
-		this.postalCode = postalCode;
-	}
 }
 
 

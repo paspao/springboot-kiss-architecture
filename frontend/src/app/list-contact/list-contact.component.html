@@ -1,0 +1,73 @@
+
+<div class="row justify-content-center" style="background-color: #f0f0f0; border-top-left-radius: 10px; border-top-right-radius: 10px; border: 1px solid black;">
+  <div class="col-sm">
+    Name
+  </div>
+  <div class="col-sm">
+    Lastname
+  </div>
+  <div class="col-sm">
+    Birt place
+  </div>
+  <div class="col-sm">
+    Country
+  </div>
+  <div class="col-lg">
+    Date of birth
+  </div>
+  <div class="col-lg">
+    Email
+  </div>
+  <div class="col-lg">
+    Fiscal Code
+  </div>
+  <div class="col-sm">
+    Gender
+  </div>
+  <div class="col-sm">
+    Id
+  </div>
+  <div class="col-sm">
+    Phone Number
+  </div>
+  <div class="col-sm">
+    Province
+  </div>
+</div>
+<div class="row justify-content-center" *ngFor="let ct of contatti | async">
+  <div class="col-sm">
+    {{ct.firstName}}
+  </div>
+  <div class="col-sm">
+    {{ct.lastName}}
+  </div>
+  <div class="col-sm">
+    {{ct.birthPlace}}
+  </div>
+  <div class="col-sm">
+    {{ct.country}}
+  </div>
+  <div class="col-lg">
+    {{ct.dateOfBirth}}
+  </div>
+  <div class="col-lg">
+    {{ct.email}}
+  </div>
+  <div class="col-lg">
+    {{ct.fiscalCode}}
+  </div>
+  <div class="col-sm">
+    {{ct.gender}}
+  </div>
+  <div class="col-sm">
+    {{ct.id}}
+  </div>
+  <div class="col-sm">
+    {{ct.phoneNumber}}
+  </div>
+  <div class="col-sm">
+    {{ct.province}}
+  </div>
+
+</div>
+
