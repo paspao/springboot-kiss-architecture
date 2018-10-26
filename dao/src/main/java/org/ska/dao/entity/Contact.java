@@ -13,27 +13,25 @@ public class Contact {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Integer id;
-	@Column(length=32, name = "NAME")
+	@Column(length=32, name = "FIRST_NAME")
 	private String firstName;// Nome
-	@Column(length=25, name = "PROVINCIA")
-	private String province;// Provincia di nascita
-	@Column(length=25, name = "COMUNE")
+	@Column(length=25, name = "BIRTH_PLACE")
 	private String birthPlace;// Comune di nascita
-	@Column(length=32, name = "SURNAME")
+	@Column(length=32, name = "LAST_NAME")
 	private String lastName;// Cognome
 	@Column(name = "BIRTH_DATE")
 	@JsonFormat(pattern="dd-MM-yyyy")
 	private LocalDate dateOfBirth;// Data di nascita
-	@Column(length=20, name = "NATION")
+	@Column(length=20, name = "COUNTRY")
 	private String country;// Nazione di nascita
-	@Column(length=1, name = "SEX")
+	@Column(length=1, name = "GENDER")
 	private String gender;// Sesso
-	@Column(length=50, name = "FISCAL_CODE")
-	private String fiscalCode;// Codice fiscale
 	@Column(length=20, name = "PHONE")
 	private String phoneNumber;// Telefono
 	@Column(length=50, name = "EMAIL")
 	private String email;// Email
+	@Column(length=50, name = "ADDRESS")
+	private String address;
 
 	public Integer getId() {
 		return id;
@@ -49,14 +47,6 @@ public class Contact {
 
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
-	}
-
-	public String getProvince() {
-		return province;
-	}
-
-	public void setProvince(String province) {
-		this.province = province;
 	}
 
 	public String getBirthPlace() {
@@ -99,14 +89,6 @@ public class Contact {
 		this.gender = gender;
 	}
 
-	public String getFiscalCode() {
-		return fiscalCode;
-	}
-
-	public void setFiscalCode(String fiscalCode) {
-		this.fiscalCode = fiscalCode;
-	}
-
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}
@@ -123,6 +105,13 @@ public class Contact {
 		this.email = email;
 	}
 
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
 }
 
 

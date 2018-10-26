@@ -12,15 +12,14 @@
 
 
 export interface Contact {
+    address?: string;
     birthPlace?: string;
     country?: string;
     dateOfBirth?: string;
     email?: string;
     firstName?: string;
-    fiscalCode?: string;
     gender?: string;
     id?: number;
     lastName?: string;
     phoneNumber?: string;
-    province?: string;
 }

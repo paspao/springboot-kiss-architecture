@@ -46,7 +46,7 @@ public class ContactController {
 	
 	@RequestMapping(value ="/all",produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
 	public @ResponseBody
-	ResponseEntity<?>getAllContacts(){
+	ResponseEntity<?> getAllContacts(){
 		ResponseEntity<?> responseEntity=null;
 		List<Contact> contactList = null;
 		contactList = contactService.findAll();
@@ -63,12 +63,11 @@ public class ContactController {
 
 	@ApiOperation(value = "Save contact", response = Contact.class)
 	@ApiResponses(value = {
-			@ApiResponse(code = 500, message = "Contact saving error",response= ErrorMessage.class)
+			@ApiResponse(code = 400, message = "Contact saving error",response= ErrorMessage.class)
 	})
-
 	@RequestMapping(value ="/save",produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.POST)
 	public @ResponseBody
-	ResponseEntity<?>saveContact(@RequestBody Contact contact){
+	ResponseEntity<?> saveContact(@RequestBody Contact contact){
 		ResponseEntity<?> responseEntity=null;
 
 		Contact insertedContact=contactService.createContact(contact);

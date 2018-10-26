@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {Contact, ContactControllerService} from "../remote-services";
-import {Observable} from "rxjs";
+import {Contact, ContactControllerService} from '../remote-services';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-list-contact',
@@ -13,7 +13,7 @@ export class ListContactComponent implements OnInit {
   constructor(private contactService: ContactControllerService) { }
 
   ngOnInit() {
-    this.contatti=this.contactService.getAllContactsUsingGET();
+    this.contatti = this.contactService.getAllContactsUsingGET();
   }
 
 }

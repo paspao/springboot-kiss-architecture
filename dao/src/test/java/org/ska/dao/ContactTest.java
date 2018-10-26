@@ -40,9 +40,9 @@ public class ContactTest {
         contact.setEmail("asda@pip.it");
         contact.setFirstName("Francesco");
         contact.setLastName("LastName");
-        contact.setFiscalCode("ASDASSDASD");
+
         contact.setGender("M");
-        contact.setProvince("Napoli");
+
         contact.setPhoneNumber("234234234");
         contact.setCountry("ITALY");
         contact=contactDao.save(contact);
@@ -58,9 +58,9 @@ public class ContactTest {
         contact.setEmail("asda@pip.it");
         contact.setFirstName("Francesco");
         contact.setLastName("LastName");
-        contact.setFiscalCode("ASDASSDASD");
+
         contact.setGender("M");
-        contact.setProvince("Napoli");
+
         contact.setPhoneNumber("234234234");
         contact.setCountry("ITALY");
         contact=contactDao.save(contact);

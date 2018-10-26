@@ -1,3 +1,57 @@
 <div class="container">
-  Add
+  <form [formGroup]="addForm" (ngSubmit)="onSubmit()">
+  
+    <label>
+      First Name:
+      <input type="text" formControlName="firstName" required>
+    </label>
+  
+    <label>
+      Last Name:
+      <input type="text" formControlName="lastName">
+    </label>
+    <label>
+      Birth place:
+      <input type="text" formControlName="birthPlace">
+    </label>
+    <label>
+      Country:
+      <input type="text" formControlName="country">
+    </label>
+    <label>
+      Date of birth:
+      <input formControlName="birthDate" type="date">
+    </label>
+    
+    <label>
+      Gender:
+      <input type="text" formControlName="gender">
+    </label>
+    <label>
+      Email:
+      <input type="email" formControlName="email" >
+    </label>
+    <label>
+      Phone number:
+      <input type="number" formControlName="phoneNumber" >
+    </label>
+
+    <div formGroupName="address">
+      <h3>Address</h3>
+    
+      <label>
+        Street:
+        <input type="text" formControlName="street">
+      </label>
+    
+    </div>
+
+    <button type="submit" [disabled]="!addForm.valid">Submit</button>
+  </form>
+  <p>
+    Form Status: {{ addForm.value | json }}
+  </p>
+  <p>
+    Form Status: {{ addForm.status }}
+  </p>
 </div>
