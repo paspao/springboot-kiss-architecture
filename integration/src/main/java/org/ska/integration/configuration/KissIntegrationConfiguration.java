@@ -1,5 +1,7 @@
 package org.ska.integration.configuration;
 
+import com.google.maps.GeoApiContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,5 +13,12 @@ import org.springframework.context.annotation.Configuration;
 public class KissIntegrationConfiguration {
 
 
+    @Bean
+    public GeoApiContext geocoder(){
+        GeoApiContext context = new GeoApiContext.Builder()
+                .apiKey("Your apikey")
+                .build();
+        return context;
+    }
 
 }

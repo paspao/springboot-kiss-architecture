@@ -12,7 +12,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.ska.api.util.UtilsWeb;
 import org.ska.api.web.beans.ErrorMessage;
-import org.ska.business.ContactService;
+import org.ska.business.beans.ContactService;
 import org.ska.dao.entity.Contact;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

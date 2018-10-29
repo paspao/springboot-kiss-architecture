@@ -1,8 +1,9 @@
-package org.ska.business;
+package org.ska.business.beans;
 
 import org.ska.business.exceptions.KissBusinessException;
 import org.ska.dao.entity.Contact;
 import org.ska.dao.repository.ContactDao;
+import org.ska.integration.beans.GeocodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,9 @@ public class ContactService {
 
 	@Autowired
 	private ContactDao contactDao;
+
+	@Autowired
+	private GeocodeService geocodeService;
 
 	
 	@Transactional(readOnly=true)
@@ -41,6 +45,7 @@ public class ContactService {
 	public Contact createContact(Contact contact) {
 		Contact mod=null;
 		contact.setId(null);
+		// Test address geocodeService.geocode()
 		mod=contactDao.save(contact);
 		return mod;
 
@@ -50,6 +55,7 @@ public class ContactService {
 		Contact mod=null;
 		if(contact.getId()==null)
 			throw new KissBusinessException("Id required");
+		// Test address geocodeService.geocode()
 		mod=contactDao.save(contact);
 		return mod;
 

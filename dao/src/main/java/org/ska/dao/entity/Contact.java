@@ -20,7 +20,7 @@ public class Contact {
 	@Column(length=32, name = "LAST_NAME")
 	private String lastName;// Cognome
 	@Column(name = "BIRTH_DATE")
-	@JsonFormat(pattern="dd-MM-yyyy")
+	@JsonFormat(pattern="dd/MM/yyyy")
 	private LocalDate dateOfBirth;// Data di nascita
 	@Column(length=20, name = "COUNTRY")
 	private String country;// Nazione di nascita
