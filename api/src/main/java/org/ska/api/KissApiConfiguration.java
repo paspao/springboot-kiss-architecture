@@ -45,8 +45,5 @@ public class KissApiConfiguration {
 	                null, null, Collections.emptyList());
 	    }
 
-
-
-
 }
 

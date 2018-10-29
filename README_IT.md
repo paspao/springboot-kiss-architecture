@@ -46,7 +46,9 @@ Quindi semplicemente definisco dove si trovano le Componenty ed in particolare d
 
 ## INTEGRATION
 
-Di solito la semplice gestione CRUD dei dati non basta, ma probabilmente avremmo bisogno di colloquiare con altri sistemi che prescindono dai nostri dati, come servizi di tipo JAX-WS o JAX-RS, oppure sistemi di stampa specifici, con protocolli diversi. In questa componente vi ricadono tutte queste logiche che prescindono dalla lagica dell'applicativo e che hanno un altissima possibilità di riutilizzo. Come per il DAO anche questo componente è di tipo foglia nel senso che non colloquierà direttamente con nessun altro strato dell' architettura piuttosto verrà utilizzato, così facendo DAO ed INTEGRATION garantiranno il concetto di riusabilità come già detto.
+Di solito la semplice gestione CRUD dei dati non basta, ma probabilmente avremmo bisogno di colloquiare con altri sistemi che prescindono dai nostri dati, come servizi di tipo JAX-WS o JAX-RS, oppure sistemi di stampa specifici, con protocolli diversi. In questa componente vi ricadono tutte queste interazioni che prescindono dalla lagica dell'applicativo e che hanno un altissima possibilità di riutilizzo. 
+
+Come per il DAO anche questo componente è di tipo foglia nel senso che non colloquierà direttamente con nessun altro strato dell' architettura piuttosto verrà utilizzato, così facendo DAO ed INTEGRATION garantiranno il concetto di riusabilità.
 
 ```java
 @Configuration
@@ -63,10 +65,14 @@ public class KissIntegrationConfiguration {
 }
 ```
 
+Qui riporto il punto centrale della configurazione del modulo, in cui c'è solo un riferimento a dove sono definiti i **Serivice** e la creazione di un servizio *third party*.
+
 ## BUSINESS LOGIC
 
-Ogni applicativo dopo l'identificazione dei dati da trattare, deve occuparsi della gestione della logica di interazione tra queste entità, coniugare i requisiti utente in logica applicativa, spezzentandoli per poi offrire ad i tiers superiori, strumenti dall'utilizzo semplice ed efficace che permettano di elaborare dati senza entrare nei dettagli di come è strutturata la banca dati. In questo tier inoltre troviamo anche la definizione e l'utilizzo dei DTO che permettano di mascherare le entity che effettivamente sono sulla banca dati, un po' per proteggere alcune informazioni che possano essere sensibili (ad esempio entity utente con password, o timestamp o informazioni necessarie alle entity ma non al resto dell'applicativo) ed anche perchè spesso il dato restituito è un dato elaborato, che probabilmente attingerà da più fonti, c'è anche da sottolineare il problema della serializzazione dei dati: in alcuni contesti è necessario trasformare le informazioni presenti in banca dati, per renderle fruibili all'uomo, questo ad esempio obbliga gli sviluppatori a macchiare con delle logiche di serializzazione le Entità, il cui scopo però è solo quello di rappresentare i dati, non serializzarli, un esempio: il campo DATE sul db magari è un numero, ma all'utente dobbiamo presentare una data, per garantire questo utilizziamo probabilmente delle annotazioni per la formattazione, che può essere una soluzione, ma così facendo leghiamo aspetti di serializzazione ad un entità e a lungo andare causerà propblemi di riutilizzo e frammentazione del codice.
+Ogni applicativo dopo l'identificazione dei dati da trattare, deve occuparsi della gestione della logica di interazione tra queste entità, coniugare i requisiti utente in logica applicativa, spezzentandoli per poi offrire ad i tiers superiori, strumenti dall'utilizzo semplice ed efficace che permettano di elaborare dati senza entrare nei dettagli di come è strutturata la banca dati o di quale integrazione vi sia sotto. In questo tier inoltre troviamo la definizione e l'utilizzo dei DTO che permettano di mascherare le entity che effettivamente sono sulla banca dati o i vari bean di integrazione, un po' per proteggere alcune informazioni che possano essere sensibili (ad esempio entity utente con password, o timestamp o informazioni necessarie alle entity ma non al resto dell'applicativo) ma specialmente perchè spesso il dato restituito è un dato elaborato, che probabilmente attingerà da più fonti, c'è anche da sottolineare il problema della serializzazione dei dati: in alcuni contesti è necessario trasformare le informazioni presenti in banca dati, per renderle fruibili all'uomo, questo ad esempio obbliga gli sviluppatori a macchiare con delle logiche di serializzazione le Entità, il cui scopo però è solo quello di rappresentare i dati, non serializzarli, un esempio: il campo DATE sul db magari è un numero, ma all'utente dobbiamo presentare una data, per garantire questo utilizziamo probabilmente delle annotazioni per la formattazione, che può essere una soluzione, ma così facendo leghiamo aspetti di serializzazione ad un entità e a lungo andare causerà problemi di riutilizzo e frammentazione del codice.
 La BUSINESS LOGIC quindi comunica con il tier DAO e il tier INTEGRATION, creando sinergia ed interazione tra i due, in più aggiunge la logica e la trasformazione dei dati in DTO fruibili da altri tiers. Attenzione il livello di business logic prende in input dei DTO definiti al suo interno e lo stesso dicasi per i dati  resituiti, non sono MAI oggetti definiti in altri tier, questo per garantire una sorta di cuscinetto (come se fosse un'interfaccia), che permetta sempre la gestione di quello che viene restituito ai tier superiori.
+
+Di seguito la **@Configuration** del tier business logic:
 
 ```java
 @Configuration
@@ -83,17 +89,168 @@ public class KissBusinessConfiguration {
 }
 ```
 
+E' l'unico modulo ad avere un legame diretto con DAO ed INTEGRATION, quindi necessariamente dovrà importare le configurazioni per poterli utilizzare. Inoltre per velocizzare il mapping tra Entity e DTO utilizzo un framework di mapping, nel caso specifico **Dozer**.
+
 ## API
 
-In questo tier ricade la logica di presentation, rappresenta il punto di ingresso del nostro applicativo, almeno dal punto vista server, in esso infatti vi finiscono tutti i servizi che siano essi di tipo JAX-RS o JAX-WS che quindi hanno principalmente il compito di presentare i dati in XML, JSON o altro. La sua unica forma di comunicazione è verso il tier della BUSINESS LOGIC, un servizio non farà altro che chiamare uno o piu servizi offerti dal layer di Business, non utilizzerà mai il tier di INTEGRATION o DAO, nè tantomeno utilizzerà oggetti definiti al loro interno, questo sempre nell'ottica di evitare hard coupling e spaghetti programming. Inoltre si occuperà di gestire aspetti di autenticazione ed autorizzazione. Le API vanno in qualche modo documentate, SEMPRE: uno dei difetti del mondo REST è proprio l'assenza di un descrittore universale di questi servizi. Una tecnologia che garantisce questo aspetto è Swagger, oggi diventata OpenAPI: permette di documentare le API, documentazione riutilizzata anche per generare in modo automatico la parte client, quindi non solo puramente descrittiva, ad esempio nel nostro caso il layer di comunicazione con i servizi REST è stato completamente generato dalla descrizione Swagger dei servizi.
+In questo tier ricade la logica di presentation, rappresenta il punto di ingresso del nostro applicativo, almeno dal punto vista server, in esso infatti vi finiscono tutti i servizi che siano essi di tipo JAX-RS o JAX-WS che quindi hanno principalmente il compito di presentare i dati in XML, JSON o altro. La sua unica forma di comunicazione è verso il tier della BUSINESS LOGIC, un servizio non farà altro che chiamare uno o piu servizi offerti dal layer di Business, non utilizzerà mai il tier di INTEGRATION o DAO, nè tantomeno utilizzerà oggetti definiti al loro interno, questo sempre nell'ottica di evitare hard coupling e spaghetti programming. Inoltre si occuperà di gestire aspetti di autenticazione ed autorizzazione. Le API vanno in qualche modo documentate, SEMPRE: uno dei difetti del mondo REST è proprio l'assenza di un descrittore universale di questi servizi. Una tecnologia che garantisce questo aspetto è **Swagger**, oggi diventata OpenAPI: permette di documentare le API, ma la documentazione prodotta può essere riutilizzata anche per generare la parte client, quindi non solo puramente descrittiva. Ad esempio nel nostro caso il layer di comunicazione con i servizi REST è stato completamente generato dalla descrizione Swagger dei servizi, nel modulo **FRONTEND** è presente la cartella *remote-services* che contiene il risultato di questa generazione ad opera del tool [https://editor.swagger.io](https://editor.swagger.io).
+
+Nella **@Configuration** del tier di api, importeremo la configurazione del tier di business e configureremo la generazione della documentazione Swagger.
+
+```java
+@Configuration
+@Import(KissBusinessConfiguration.class)
+@EnableSwagger2
+public class KissApiConfiguration {
+	
+	    @Autowired
+	    private Environment env;
+
+	    @Bean
+	    public Docket api() {
+	        return new Docket(DocumentationType.SWAGGER_2)
+	                .select()
+	                //.apis(RequestHandlerSelectors.any())
+	                .apis(RequestHandlerSelectors.basePackage("org.ska.api.web"))
+	                .paths(PathSelectors.any())
+	                .build()
+	                .apiInfo(apiInfo());
+	    }
+
+	    private ApiInfo apiInfo() {
+	        return new ApiInfo(
+	                "Contact management REST API",
+	                "API",
+	                env.getProperty("info.version"),
+	                null,
+	                new Contact("Pasquale Paola", "https://www.linkedin.com/in/pasqualepaola/", "pasquale.paola@gmail.com"),
+	                null, null, Collections.emptyList());
+	    }
+	    
+}
+```
 
 ## FRONTEND
 
-Rappresenta la Single Page Application: questo tipo di applicazione deve essere completamente scissa dall'applicativo e l'utilizzo della tencologia Rest già garantisce questo aspetto ma è necessario prestare attenzione a come viene implementata la comunicazione con i servizi remoti. Spesso mi sono imbattutto in pessime organizzazioni e gestioni dei vari client HTTP utilizzati per invocare i servizi remoti, e mi riferisco alle reference che si trovano lungo tutto l'applicativo, per risolvere questo problema e rendere la SPA strettamente separata da tutto ciò che rappresenta la comunciazione con i servizi remoti, come già detto, utilizzo la tecnologia Swagger per generare uno stub che permetta la comunicazione con l'API Rest. In questo modo, nella mia esperienza, gli sviluppatori utilizzeranno quanto prodotto da Swagger innanzitutto perchè è tanto codice già scritto, con diverse opzioni di utilizzo, non hanno più quindi bisogno di riscreverlo, inoltre gli sviluppatori implementeranno le loro logiche altrove, si limiteranno ad utilizzare quanto prodotto da Swagger, inoltre la sezione di comunicazione remota (Stub) sarà continuamente rigenerata e nessuno sviluppatore si sognerà mai di implementare le proprie logiche in sorgenti che potrebbero essere sovrascritti.
+Rappresenta la Single Page Application: questo tipo di applicazione deve essere completamente scissa dall'applicativo e l'utilizzo della tencologia Rest già garantisce questo aspetto ma è necessario prestare attenzione a come viene implementata la comunicazione con i servizi remoti. Spesso mi sono imbattutto in pessime organizzazioni e gestioni dei vari client HTTP utilizzati per invocare i servizi remoti, e mi riferisco alle reference che si trovano lungo tutto l'applicativo, per risolvere questo problema e rendere la SPA strettamente separata da tutto ciò che rappresenta la comunciazione con i servizi remoti, come già detto, utilizzo la tecnologia Swagger per generare uno stub che permetta la comunicazione con l'API Rest. In questo modo, nella mia esperienza, gli sviluppatori utilizzeranno quanto prodotto da Swagger innanzitutto perchè è tanto codice già scritto, con diverse opzioni di utilizzo, non hanno più quindi bisogno di riscreverlo, inoltre gli sviluppatori implementeranno le loro logiche altrove, si limiteranno ad utilizzare quanto prodotto da Swagger, la sezione di comunicazione remota (Stub) sarà continuamente rigenerata e nessuno sviluppatore si sognerà mai di implementare le proprie logiche in sorgenti che potrebbero essere sovrascritti (spero).
 
-To build the project:
+Per garantire che un'applicazione scritta in Angular possa rientrare nel ciclo di building di un progetto Maven, facciamo in modo che anche il **FRONTEND** diventi un modulo Maven, non produrrà nulla infatti sarà un packaging di tipo *pom*, ma questo ci consente di inserirlo nella build di maven e creare delle dipendenze con i suoi fratelli. Per poter integrare una build Angular in un contesto Maven utilizziamo un plugin notot ai più che è il *frontend-maven-plugin*, che permette l'installazione di un'istanza *Node* ed *Npm* e la conseguente invocazione dei task *Node* quali dipendenze e build.
+
+```xml
+...
+<artifactId>frontend</artifactId>
+
+  <packaging>pom</packaging>
+  <build>
+    <resources>
+      <resource>
+        <directory>dist/resources</directory>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>1.6</version>
+        <configuration>
+          <nodeVersion>v8.12.0</nodeVersion>
+          <npmInheritsProxyConfigFromMaven>false</npmInheritsProxyConfigFromMaven>
+          <npmVersion>6.4.1</npmVersion>
+
+        </configuration>
+        <executions>
+          <execution>
+            <id>install node and npm</id>
+            <goals>
+              <goal>install-node-and-npm</goal>
+            </goals>
+            <phase>generate-resources</phase>
+          </execution>
+          <execution>
+            <id>npm install</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+
+              <arguments>install</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm build</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+
+            <phase>generate-resources</phase>
+
+            <configuration>
+
+              <arguments>run build</arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>3.1.0</version>
+        <configuration>
+
+          <filesets>
+            <fileset>
+              <directory>dist/resources</directory>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+...
+```
+
+Qaundo verrà invocato il task di build di Angular, verrà invocata la seguente sezione:
+
+```json
+...
+"build": "ng build --prod --progress --build-optimizer --delete-output-path --base-href /kiss/ui/ --output-path dist/resources/static/ui"
+...
+```
+
+L'output path è impostato su *dist/resources/static/ui*, ed il path *dist/resources* è configurato anche come *resources* del modulo frontend, unito alla configurazione del tier API che riporto di seguito consente di infilare il risultato della build Angular nell'applicativo Springboot. Nell'output path è infatti presente una directory particolare **.../static/...**, una di quelle in cui Springboot permette di definire contenuti statici dell'applicativo.
+
+
+```xml
+...
+<resources>
+	<resource>
+		<directory>../frontend/dist/resources</directory>
+	</resource>
+	<resource>
+		<directory>src/main/resources</directory>
+		<filtering>true</filtering>
+	</resource>
+
+</resources>
+...
+```
+
+
+Build
+=====
+Per effetturare una build:
 
 ```bash
 mvn clean install
 ```
+
+Run
+===
+
+Per lanciare l'applicativo:
+
+```bash
+java -jar api/target/api-0.0.1-SNAPSHOT.jar
+```
+
+All'url [http://localhost:8080/kiss/](http://localhost:8080/kiss/) sarà disponibile l'applicativo.
 
