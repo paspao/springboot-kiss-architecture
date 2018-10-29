@@ -18,7 +18,7 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { Contact } from '../model/contact';
+import { ContactDTO } from '../model/contactDTO';
 import { ErrorMessage } from '../model/errorMessage';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -63,9 +63,9 @@ export class ContactControllerService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAllContactsUsingGET(observe?: 'body', reportProgress?: boolean): Observable<Array<Contact>>;
-    public getAllContactsUsingGET(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<Contact>>>;
-    public getAllContactsUsingGET(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<Contact>>>;
+    public getAllContactsUsingGET(observe?: 'body', reportProgress?: boolean): Observable<Array<ContactDTO>>;
+    public getAllContactsUsingGET(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<ContactDTO>>>;
+    public getAllContactsUsingGET(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<ContactDTO>>>;
     public getAllContactsUsingGET(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
@@ -84,7 +84,7 @@ export class ContactControllerService {
             'application/json'
         ];
 
-        return this.httpClient.get<Array<Contact>>(`${this.basePath}/api/contacts/all`,
+        return this.httpClient.get<Array<ContactDTO>>(`${this.basePath}/api/contacts/all`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -101,10 +101,10 @@ export class ContactControllerService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public saveContactUsingPOST(contact: Contact, observe?: 'body', reportProgress?: boolean): Observable<Contact>;
-    public saveContactUsingPOST(contact: Contact, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Contact>>;
-    public saveContactUsingPOST(contact: Contact, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Contact>>;
-    public saveContactUsingPOST(contact: Contact, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public saveContactUsingPOST(contact: ContactDTO, observe?: 'body', reportProgress?: boolean): Observable<ContactDTO>;
+    public saveContactUsingPOST(contact: ContactDTO, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<ContactDTO>>;
+    public saveContactUsingPOST(contact: ContactDTO, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<ContactDTO>>;
+    public saveContactUsingPOST(contact: ContactDTO, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (contact === null || contact === undefined) {
             throw new Error('Required parameter contact was null or undefined when calling saveContactUsingPOST.');
         }
@@ -129,7 +129,7 @@ export class ContactControllerService {
             headers = headers.set("Content-Type", httpContentTypeSelected);
         }
 
-        return this.httpClient.post<Contact>(`${this.basePath}/api/contacts/save`,
+        return this.httpClient.post<ContactDTO>(`${this.basePath}/api/contacts/save`,
             contact,
             {
                 withCredentials: this.configuration.withCredentials,

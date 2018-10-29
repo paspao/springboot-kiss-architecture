@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ContactControllerService } from '../remote-services';
-import { Contact } from '../remote-services/model/contact';
+import { ContactControllerService, ContactDTO } from '../remote-services';
 import { Router } from '@angular/router';
 
 @Component({
@@ -32,7 +31,7 @@ export class AddContactComponent implements OnInit {
   onSubmit() {
     // TODO: Use EventEmitter with form value
     // console.warn(this.addForm.value);
-    const contact:  Contact = {};
+    const contact:  ContactDTO = {};
     contact.firstName = this.addForm.value['firstName'];
     contact.lastName = this.addForm.value['lastName'];
     contact.birthPlace = this.addForm.value['birthPlace'];

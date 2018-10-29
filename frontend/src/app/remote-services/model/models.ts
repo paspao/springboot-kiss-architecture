@@ -1,2 +1,2 @@
-export * from './contact';
+export * from './contactDTO';
 export * from './errorMessage';

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {Contact, ContactControllerService} from '../remote-services';
+import {ContactDTO, ContactControllerService} from '../remote-services';
 import {Observable} from 'rxjs';
 
 @Component({
@@ -9,7 +9,7 @@ import {Observable} from 'rxjs';
 })
 export class ListContactComponent implements OnInit {
 
-  contatti: Observable<Array<Contact>>;
+  contatti: Observable<Array<ContactDTO>>;
   constructor(private contactService: ContactControllerService) { }
 
   ngOnInit() {

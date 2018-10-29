@@ -1,7 +1,5 @@
 package org.ska.dao.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import javax.persistence.*;
 import java.time.LocalDate;
 
@@ -20,7 +18,6 @@ public class Contact {
 	@Column(length=32, name = "LAST_NAME")
 	private String lastName;// Cognome
 	@Column(name = "BIRTH_DATE")
-	@JsonFormat(pattern="dd/MM/yyyy")
 	private LocalDate dateOfBirth;// Data di nascita
 	@Column(length=20, name = "COUNTRY")
 	private String country;// Nazione di nascita

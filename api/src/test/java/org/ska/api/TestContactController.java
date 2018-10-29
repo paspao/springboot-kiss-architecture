@@ -2,7 +2,7 @@ package org.ska.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ska.api.web.ContactController;
-import org.ska.business.beans.ContactService;
+import org.ska.business.ContactService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;

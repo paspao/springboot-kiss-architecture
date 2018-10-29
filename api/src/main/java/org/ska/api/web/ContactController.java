@@ -12,8 +12,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.ska.api.util.UtilsWeb;
 import org.ska.api.web.beans.ErrorMessage;
-import org.ska.business.beans.ContactService;
-import org.ska.dao.entity.Contact;
+import org.ska.business.ContactService;
+import org.ska.business.beans.ContactDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class ContactController {
 	
 	
 	
-	@ApiOperation(value = "Retrieve all contacts", response = Contact.class,responseContainer = "list")
+	@ApiOperation(value = "Retrieve all contacts", response = ContactDTO.class,responseContainer = "list")
 	@ApiResponses(value = {
 			@ApiResponse(code = 404, message = "Contact not found",response=Void.class)
 	})
@@ -48,31 +48,31 @@ public class ContactController {
 	public @ResponseBody
 	ResponseEntity<?> getAllContacts(){
 		ResponseEntity<?> responseEntity=null;
-		List<Contact> contactList = null;
+		List<ContactDTO> contactList = null;
 		contactList = contactService.findAll();
 
 		if(UtilsWeb.isEmpty(contactList))
 			responseEntity=new ResponseEntity(HttpStatus.NOT_FOUND);
 		else {
-			Contact[] contactArray = contactList.toArray(new Contact[contactList.size()]);
-			responseEntity = new ResponseEntity<Contact[]>(contactArray, HttpStatus.OK);
+			ContactDTO[] contactArray = contactList.toArray(new ContactDTO[contactList.size()]);
+			responseEntity = new ResponseEntity<ContactDTO[]>(contactArray, HttpStatus.OK);
 		}
 		return responseEntity;
 	}
 
 
-	@ApiOperation(value = "Save contact", response = Contact.class)
+	@ApiOperation(value = "Save contact", response = ContactDTO.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 400, message = "Contact saving error",response= ErrorMessage.class)
 	})
 	@RequestMapping(value ="/save",produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.POST)
 	public @ResponseBody
-	ResponseEntity<?> saveContact(@RequestBody Contact contact){
+	ResponseEntity<?> saveContact(@RequestBody ContactDTO contact){
 		ResponseEntity<?> responseEntity=null;
 
-		Contact insertedContact=contactService.createContact(contact);
+		ContactDTO insertedContact=contactService.createContact(contact);
 
-		responseEntity = new ResponseEntity<Contact>(insertedContact, HttpStatus.OK);
+		responseEntity = new ResponseEntity<ContactDTO>(insertedContact, HttpStatus.OK);
 
 		return responseEntity;
 	}
