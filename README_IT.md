@@ -5,7 +5,7 @@ Springboot with Angular, a kiss architecture
 
 Like suggested by wikipedia, KISS is an acronym for "Keep it simple, stupid" as a design principle noted by the U.S. Navy in 1960. The KISS principle states that most systems work best if they are kept simple rather than made complicated; therefore simplicity should be a key goal in design, and that unnecessary complexity should be avoided. The phrase has been associated with aircraft engineer Kelly Johnson.
 
-Nell'arco della mia carriera lavorativa ho avuto modo di sperimentare vari tipi di tecnologie, avendo la possibilità di vedere lo sviluppo di un applicativo sia dal punto di vista client (che possa essere una SPA o un App nativa) sia dal punto di vista server. Accumulando queste esperienze ho provato a sviluppare un'architettura semplice che prevede il rispetto di PATTERN fondamentali in un contesto CRUD, di seguito vi illustrerò le fondmenta di questa architettura, utilizzata come punto di partenza in tutti i progetti realizzati da me o dai mie colleghi.
+Nell'arco delle mie esperienze di sviluppo ho avuto modo di sperimentare vari tipi di tecnologie, avendo la possibilità di vedere lo sviluppo di un applicativo sia dal punto di vista client (che possa essere una SPA o un App nativa) sia dal punto di vista server. Accumulando queste esperienze ho provato a sviluppare un'architettura semplice che prevede il rispetto di *PATTERN* fondamentali in un contesto *CRUD*, proverò ad illustrare le fondmenta di questa architettura, utilizzata come punto di partenza in tutti i progetti realizzati da me.
 
 Nella progettazione di questa architettura ho cercato di tenere a mente sempre il concetto KISS, e proprio in quest'ottica ho previsto 5 strati anche detti tier, ognuno con delle logiche specifiche di utilizzo, ovvero:
 
@@ -17,17 +17,19 @@ Nella progettazione di questa architettura ho cercato di tenere a mente sempre i
 
 L'ordine è lo stesso seguito dal flusso di informazioni che partono dal frontend per arrivare fino ai DAO. Entrando nei dettagli di ogni tier preferisco utilizzare un approccio di tipo BottomUp, partiamo dunque dai dati.
 
+![Architecture](img/Ska.png)
+
 L'articolo fa riferimento al progetto scaricabile al link [https://github.com/paspao/springboot-kiss-architecture](https://github.com/paspao/springboot-kiss-architecture)
 
 ```bash
 git clone https://github.com/paspao/springboot-kiss-architecture
 ```
 
-E' un progetto organizzato utilizzando una struttra **maven** di tipo padre figlio, lo stesso frontend, sviluppato in Angular, viene inserito nella fase di building per poter garantire coerenza nella necessità di dover consegnare un unico artefatto.
+E' un progetto organizzato utilizzando una struttra **maven** di tipo padre figlio, lo stesso frontend, sviluppato in Angular, viene inserito nella fase di building **maven** per poter creare un unico artefatto.
 
 ## DAO
 
-Quando parliamo di applicativi CRUD per prima cosa parliamo di dati, in mondi SQL, NOSQL ma comunque dati da collezionare e trattare. Questo modulo nel mio disegno rappresenta il punto più profondo se la guardiamo come uno stack di tier, quello che a che fare con i dati e nei quali ricade la descrizione delle entità e la logica di accesso. Attenzione semplice logica di accesso ai dati: inserimento, modifica, cancellazione e visualizzazione nulla di più e nulla che la leghi ad altri tier; è il tier piu profondo ed anche uno di quelli che non ha dipendenze con nessun altro dei suoi fratelli, non gestisce aspetti specifici dell'applicativo, come autorizzazioni, transazioni o altro: solo ed esclusivamente accesso ai dati.
+Quando parliamo di applicativi CRUD per prima cosa parliamo di dati, in mondi SQL, NOSQL ma comunque dati da collezionare e trattare. Questo modulo nel mio disegno rappresenta il punto più profondo se lo guardiamo come uno stack di tier, quello che a che fare con i dati nei quali ricade la descrizione delle entità e la logica di accesso. Attenzione semplice logica di accesso ai dati: inserimento, modifica, cancellazione e visualizzazione nulla di più e nulla che la leghi ad altri tier; è il tier piu profondo ed anche uno di quelli che non ha dipendenze con nessun altro dei suoi fratelli, non gestisce aspetti specifici dell'applicativo, come autorizzazioni, transazioni o altro: solo ed esclusivamente accesso ai dati.
 In un contesto Springboot utilizziamo tecnologie quali **Entity** e **Repository**, nel dettaglio mostro la **@Configuration** del modulo DAO, oggetto centrale in ogni applictivo Springboot, infatti vederemo che ogni modulo ha il suo oggetto **@Configuration**
 
 ```java
@@ -40,15 +42,15 @@ In un contesto Springboot utilizziamo tecnologie quali **Entity** e **Repository
 public class KissDaoConfiguration {
 }
 ```
-Quindi semplicemente definisco dove si trovano le Componenty ed in particolare dove si trovano le Entity ed i Repository. In più abilito le transazioni, così facendo chiunque utilizzerà il modulo DAO non dovrà preoccuparsi di aspetti relativi alla configurazione del DAO.
+Quindi definisco dove si trovano i *Component* specificando dove si trovano le Entity ed i Repository. In più abilito le transazioni, così facendo chiunque utilizzerà il modulo DAO non dovrà preoccuparsi di aspetti relativi alla configurazione del DAO.
 
 
 
 ## INTEGRATION
 
-Di solito la semplice gestione CRUD dei dati non basta, ma probabilmente avremmo bisogno di colloquiare con altri sistemi che prescindono dai nostri dati, come servizi di tipo JAX-WS o JAX-RS, oppure sistemi di stampa specifici, con protocolli diversi. In questa componente vi ricadono tutte queste interazioni che prescindono dalla lagica dell'applicativo e che hanno un altissima possibilità di riutilizzo. 
+Di solito la semplice gestione CRUD dei dati non basta, probabilmente avremmo bisogno di colloquiare con altri sistemi che prescindono dai nostri dati, come servizi di tipo JAX-WS o JAX-RS, oppure sistemi di stampa specifici, con protocolli diversi. In questa componente ricadono tutte le interazioni che prescindono dalla lagica dell'applicativo e che hanno un'altissima possibilità di riutilizzo. 
 
-Come per il DAO anche questo componente è di tipo foglia nel senso che non colloquierà direttamente con nessun altro strato dell' architettura piuttosto verrà utilizzato, così facendo DAO ed INTEGRATION garantiranno il concetto di riusabilità.
+Come per il DAO anche questo componente è di tipo foglia nel senso che non colloquierà direttamente con nessun altro strato dell'architettura piuttosto verrà utilizzato, così facendo DAO ed INTEGRATION garantiranno il concetto di riusabilità.
 
 ```java
 @Configuration
@@ -69,8 +71,13 @@ Qui riporto il punto centrale della configurazione del modulo, in cui c'è solo 
 
 ## BUSINESS LOGIC
 
-Ogni applicativo dopo l'identificazione dei dati da trattare, deve occuparsi della gestione della logica di interazione tra queste entità, coniugare i requisiti utente in logica applicativa, spezzentandoli per poi offrire ad i tiers superiori, strumenti dall'utilizzo semplice ed efficace che permettano di elaborare dati senza entrare nei dettagli di come è strutturata la banca dati o di quale integrazione vi sia sotto. In questo tier inoltre troviamo la definizione e l'utilizzo dei DTO che permettano di mascherare le entity che effettivamente sono sulla banca dati o i vari bean di integrazione, un po' per proteggere alcune informazioni che possano essere sensibili (ad esempio entity utente con password, o timestamp o informazioni necessarie alle entity ma non al resto dell'applicativo) ma specialmente perchè spesso il dato restituito è un dato elaborato, che probabilmente attingerà da più fonti, c'è anche da sottolineare il problema della serializzazione dei dati: in alcuni contesti è necessario trasformare le informazioni presenti in banca dati, per renderle fruibili all'uomo, questo ad esempio obbliga gli sviluppatori a macchiare con delle logiche di serializzazione le Entità, il cui scopo però è solo quello di rappresentare i dati, non serializzarli, un esempio: il campo DATE sul db magari è un numero, ma all'utente dobbiamo presentare una data, per garantire questo utilizziamo probabilmente delle annotazioni per la formattazione, che può essere una soluzione, ma così facendo leghiamo aspetti di serializzazione ad un entità e a lungo andare causerà problemi di riutilizzo e frammentazione del codice.
-La BUSINESS LOGIC quindi comunica con il tier DAO e il tier INTEGRATION, creando sinergia ed interazione tra i due, in più aggiunge la logica e la trasformazione dei dati in DTO fruibili da altri tiers. Attenzione il livello di business logic prende in input dei DTO definiti al suo interno e lo stesso dicasi per i dati  resituiti, non sono MAI oggetti definiti in altri tier, questo per garantire una sorta di cuscinetto (come se fosse un'interfaccia), che permetta sempre la gestione di quello che viene restituito ai tier superiori.
+Ogni applicativo dopo l'identificazione dei dati da trattare, deve occuparsi della gestione della logica di interazione tra queste entità, coniugare i requisiti utente in logica applicativa, spezzentandoli per poi offrire ad i tiers superiori, strumenti dall'utilizzo semplice ed efficace che permettano elaborazioni senza entrare nei dettagli di come è strutturata la banca dati o di quale integrazione vi sia sotto. 
+
+In questo tier inoltre troviamo la definizione e l'utilizzo dei **DTO** che permettono di mascherare i dati che effettivamente sono sulla banca dati o nei vari bean di integrazione: ma perchè? 
+Le ragioni sono diverse innanzitutto è una forma di protezione per proteggere informazioni che possano essere sensibili (ad esempio dati utente come una password oppure timestamp o informazioni di altra natura necessarie alla coerenza dei dati, ma non all'utente finale). In altre situazioni invece il dato restituito è un dato elaborato, che probabilmente attingerà da più fonti, quindi è necessario strutturare e rendere coerenti questi dati. 
+C'è poi da sottolineare un altro aspetto, la serializzazione dei dati: in alcuni contesti è necessario trasformare le informazioni presenti in banca dati, per renderle fruibili all'uomo, questo ad esempio obbliga gli sviluppatori a "macchiare" con delle logiche di serializzazione le *Entità*, il cui scopo dovrebbe essere  solo quello di rappresentare i dati, non serializzarli, un esempio: il campo DATE sul db magari è un numero, ma all'utente dobbiamo presentare una data, per farlo utilizziamo delle annotazioni per la formattazione probabilmente, che può essere una soluzione, ma così facendo leghiamo aspetti di serializzazione ad un entità, sul lungo termine questo tipo di soluzione porta all'inusabilità in termini di riutilizzo e illegibilità, Harold Abelson disse *Programs must be written for people to read, and only incidentally for machines to execute*.
+
+Ricapitolando la BUSINESS LOGIC comunica con il tier DAO e il tier INTEGRATION, creando sinergia ed interazione tra i due, in più aggiunge la logica e la trasformazione dei dati in DTO fruibili da altri tiers. Attenzione il livello di business logic prende in input dei DTO definiti al suo interno e lo stesso dicasi per i dati  resituiti, non sono MAI oggetti definiti in altri tier, questo per garantire quanto detto in precedenza e quindi avere una sorta di cuscinetto (come un'interfaccia), che permetta sempre il controllo di ciò che viene restituito ai tier superiori.
 
 Di seguito la **@Configuration** del tier business logic:
 

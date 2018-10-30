@@ -2,6 +2,7 @@ package org.ska.dao.entity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -29,6 +30,8 @@ public class Contact {
 	private String email;// Email
 	@Column(length=50, name = "ADDRESS")
 	private String address;
+	@Column(name = "TIME")
+	private LocalDateTime timestamp;
 
 	public Integer getId() {
 		return id;
@@ -108,6 +111,14 @@ public class Contact {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public LocalDateTime getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(LocalDateTime timestamp) {
+		this.timestamp = timestamp;
 	}
 }
 
