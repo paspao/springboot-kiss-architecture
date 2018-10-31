@@ -1,4 +1,4 @@
-Springboot with Angular, a kiss architecture
+A "Kiss architecture", implemented with Springboot and Angular, but always valid
 ============================================
 [![Build Status](https://travis-ci.org/paspao/springboot-kiss-architecture.svg?branch=master)](https://travis-ci.org/paspao/springboot-kiss-architecture)
 
