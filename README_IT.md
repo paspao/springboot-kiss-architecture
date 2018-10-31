@@ -15,7 +15,7 @@ Nella progettazione di questa architettura ho cercato di tenere a mente sempre i
 * INTEGRATION
 * DAO
 
-L'ordine è lo stesso seguito dal flusso di informazioni che partono dal frontend per arrivare fino ai DAO. Entrando nei dettagli di ogni tier preferisco utilizzare un approccio di tipo BottomUp, partiamo dunque dai dati.
+Quindi utilizzo un modello architetturale *multi-tier*, l'ordine utilizzato nell'elenco è lo stesso seguito dal flusso di informazioni, partono dal frontend per arrivare fino ai DAO. 
 
 ![Architecture](img/Ska.png)
 
@@ -25,12 +25,14 @@ L'articolo fa riferimento al progetto scaricabile al link [https://github.com/pa
 git clone https://github.com/paspao/springboot-kiss-architecture
 ```
 
-E' un progetto organizzato utilizzando una struttra **maven** di tipo padre figlio, lo stesso frontend, sviluppato in Angular, viene inserito nella fase di building **maven** per poter creare un unico artefatto.
+E' un progetto organizzato utilizzando una struttra **maven** di tipo padre figlio, lo stesso frontend, sviluppato in Angular, viene inserito nella fase di building **maven** per poter creare un unico artefatto, nel paragrafo *FRONTEND* viene spiegato come.
+
+Entrando nei dettagli di ogni tier preferisco utilizzare un approccio di tipo *BottomUp*, partiamo dunque dai dati.
 
 ## DAO
 
 Quando parliamo di applicativi CRUD per prima cosa parliamo di dati, in mondi SQL, NOSQL ma comunque dati da collezionare e trattare. Questo modulo nel mio disegno rappresenta il punto più profondo se lo guardiamo come uno stack di tier, quello che a che fare con i dati nei quali ricade la descrizione delle entità e la logica di accesso. Attenzione semplice logica di accesso ai dati: inserimento, modifica, cancellazione e visualizzazione nulla di più e nulla che la leghi ad altri tier; è il tier piu profondo ed anche uno di quelli che non ha dipendenze con nessun altro dei suoi fratelli, non gestisce aspetti specifici dell'applicativo, come autorizzazioni, transazioni o altro: solo ed esclusivamente accesso ai dati.
-In un contesto Springboot utilizziamo tecnologie quali **Entity** e **Repository**, nel dettaglio mostro la **@Configuration** del modulo DAO, oggetto centrale in ogni applictivo Springboot, infatti vederemo che ogni modulo ha il suo oggetto **@Configuration**
+In un contesto Springboot utilizziamo tecnologie quali **Entity** e **Repository**, nel dettaglio mostro la **@Configuration** del modulo DAO, *annotation* centrale in ogni applictivo/modulo Springboot.
 
 ```java
 @Configuration
@@ -50,7 +52,7 @@ Quindi definisco dove si trovano i *Component* specificando dove si trovano le E
 
 Di solito la semplice gestione CRUD dei dati non basta, probabilmente avremmo bisogno di colloquiare con altri sistemi che prescindono dai nostri dati, come servizi di tipo JAX-WS o JAX-RS, oppure sistemi di stampa specifici, con protocolli diversi. In questa componente ricadono tutte le interazioni che prescindono dalla lagica dell'applicativo e che hanno un'altissima possibilità di riutilizzo. 
 
-Come per il DAO anche questo componente è di tipo foglia nel senso che non colloquierà direttamente con nessun altro strato dell'architettura piuttosto verrà utilizzato, così facendo DAO ed INTEGRATION garantiranno il concetto di riusabilità.
+Come per il DAO anche questo componente è di tipo foglia, non colloquierà direttamente con nessun altro strato dell'architettura piuttosto verrà utilizzato, così facendo DAO ed INTEGRATION garantiranno un'alta *reusability*.
 
 ```java
 @Configuration
@@ -71,13 +73,17 @@ Qui riporto il punto centrale della configurazione del modulo, in cui c'è solo 
 
 ## BUSINESS LOGIC
 
-Ogni applicativo dopo l'identificazione dei dati da trattare, deve occuparsi della gestione della logica di interazione tra queste entità, coniugare i requisiti utente in logica applicativa, spezzentandoli per poi offrire ad i tiers superiori, strumenti dall'utilizzo semplice ed efficace che permettano elaborazioni senza entrare nei dettagli di come è strutturata la banca dati o di quale integrazione vi sia sotto. 
+Ogni applicativo dopo l'identificazione dei dati da trattare, deve occuparsi della gestione della logica di interazione tra queste entità, coniugare i requisiti utente in logica applicativa, spezzentandoli per poi offrire ai tiers superiori, strumenti dall'utilizzo semplice ed efficace che permettano elaborazioni senza entrare nei dettagli di come è strutturata la banca dati o di quale integrazione vi sia sotto. 
 
 In questo tier inoltre troviamo la definizione e l'utilizzo dei **DTO** che permettono di mascherare i dati che effettivamente sono sulla banca dati o nei vari bean di integrazione: ma perchè? 
-Le ragioni sono diverse innanzitutto è una forma di protezione per proteggere informazioni che possano essere sensibili (ad esempio dati utente come una password oppure timestamp o informazioni di altra natura necessarie alla coerenza dei dati, ma non all'utente finale). In altre situazioni invece il dato restituito è un dato elaborato, che probabilmente attingerà da più fonti, quindi è necessario strutturare e rendere coerenti questi dati. 
+Le ragioni sono diverse innanzitutto è una forma di protezione, proteggere informazioni che possano essere sensibili (ad esempio dati utente come una password oppure timestamp o informazioni di altra natura necessarie alla coerenza dei dati, ma non all'utente finale). In altre situazioni invece il dato restituito è un dato elaborato, che probabilmente attingerà da più fonti, quindi è necessario strutturare e rendere coerenti questi dati. 
 C'è poi da sottolineare un altro aspetto, la serializzazione dei dati: in alcuni contesti è necessario trasformare le informazioni presenti in banca dati, per renderle fruibili all'uomo, questo ad esempio obbliga gli sviluppatori a "macchiare" con delle logiche di serializzazione le *Entità*, il cui scopo dovrebbe essere  solo quello di rappresentare i dati, non serializzarli, un esempio: il campo DATE sul db magari è un numero, ma all'utente dobbiamo presentare una data, per farlo utilizziamo delle annotazioni per la formattazione probabilmente, che può essere una soluzione, ma così facendo leghiamo aspetti di serializzazione ad un entità, sul lungo termine questo tipo di soluzione porta all'inusabilità in termini di riutilizzo e illegibilità, Harold Abelson disse *Programs must be written for people to read, and only incidentally for machines to execute*.
 
-Ricapitolando la BUSINESS LOGIC comunica con il tier DAO e il tier INTEGRATION, creando sinergia ed interazione tra i due, in più aggiunge la logica e la trasformazione dei dati in DTO fruibili da altri tiers. Attenzione il livello di business logic prende in input dei DTO definiti al suo interno e lo stesso dicasi per i dati  resituiti, non sono MAI oggetti definiti in altri tier, questo per garantire quanto detto in precedenza e quindi avere una sorta di cuscinetto (come un'interfaccia), che permetta sempre il controllo di ciò che viene restituito ai tier superiori.
+I DTO permettono di fronteggiare i problemi elencati, creando una sorta di "cuscinetto", di conseguenza più *loosely coupled* e maggiore riusability.
+
+Ricapitolando la BUSINESS LOGIC comunica con il tier DAO e il tier INTEGRATION, creando sinergia ed interazione tra i due, in più aggiunge logica e trasformazione dei dati in DTO fruibili da altri tier. Attenzione il livello di business logic utilizza DTO definiti al suo interno e lo stesso vale per i dati  resituiti, non sono MAI oggetti definiti in altri tier, questo per garantire quanto detto in precedenza ed avere sempre la possibilità di agire su quanto restituito.
+
+Un'altra caratteristica di questo tier è la gestione del transazioni: implementando logica di business è in grado di stabilire se un'operazione sui dati possa andare a buon fine oppure no.
 
 Di seguito la **@Configuration** del tier business logic:
 
@@ -96,11 +102,13 @@ public class KissBusinessConfiguration {
 }
 ```
 
-E' l'unico modulo ad avere un legame diretto con DAO ed INTEGRATION, quindi necessariamente dovrà importare le configurazioni per poterli utilizzare. Inoltre per velocizzare il mapping tra Entity e DTO utilizzo un framework di mapping, nel caso specifico **Dozer**.
+E' l'unico modulo ad avere un legame diretto con DAO ed INTEGRATION, quindi necessariamente dovrà importare le configurazioni per poterli utilizzare. Inoltre per velocizzare il mapping tra Entity e DTO, nel caso specifico, utilizzo un framework di mapping **Dozer**.
 
 ## API
 
-In questo tier ricade la logica di presentation, rappresenta il punto di ingresso del nostro applicativo, almeno dal punto vista server, in esso sono definiti i servizi che siano essi di tipo JAX-RS o JAX-WS che hanno principalmente il compito di presentare i dati in XML, JSON o altro. La sua unica forma di comunicazione è verso il tier della BUSINESS LOGIC: un servizio non farà altro che chiamare uno o piu servizi offerti dal layer di Business, non utilizzerà mai il tier di INTEGRATION o DAO, nè tantomeno utilizzerà oggetti definiti al loro interno, questo sempre nell'ottica di evitare *tightly coupled* e *spaghetti code*. Inoltre si occuperà di gestire aspetti di autenticazione ed autorizzazione. Le API vanno in qualche modo documentate, SEMPRE: uno dei difetti del mondo REST è proprio l'assenza di un descrittore universale di questi servizi. Una tecnologia che garantisce questo aspetto è **Swagger**, oggi diventata OpenAPI: permette di documentare le API, ma la documentazione prodotta può essere riutilizzata anche per generare la parte client, quindi non solo puramente descrittiva. Ad esempio nel nostro caso il layer di comunicazione con i servizi REST è stato completamente generato dalla descrizione Swagger dei servizi, nel modulo **FRONTEND** è presente la cartella *remote-services* che contiene il risultato di questa generazione ad opera del tool [https://editor.swagger.io](https://editor.swagger.io).
+In questo tier ricade la logica di presentation, rappresenta il punto di ingresso del nostro applicativo, almeno dal punto vista server, in esso sono definiti i servizi che siano essi di tipo JAX-RS o JAX-WS che hanno principalmente il compito di presentare i dati in XML, JSON o altro. La sua unica forma di comunicazione è verso il tier della BUSINESS LOGIC: un servizio non farà altro che chiamare uno o piu servizi offerti dal layer di Business, non utilizzerà mai il tier di INTEGRATION o DAO, nè tantomeno utilizzerà oggetti definiti al loro interno, questo sempre nell'ottica di evitare *tightly coupled* e *spaghetti code*, qui inoltre. 
+
+Si occupa di gestire aspetti di autenticazione ed autorizzazione. Le API vanno in qualche modo documentate, SEMPRE: uno dei difetti del mondo REST è proprio l'assenza di un descrittore universale di questi servizi. Una tecnologia che garantisce questo aspetto è **Swagger**, oggi diventata OpenAPI: permette di documentare le API, ma la documentazione prodotta può essere riutilizzata anche per generare la parte client, quindi non solo puramente descrittiva. Ad esempio nel nostro caso il layer di comunicazione con i servizi REST è stato completamente generato dalla descrizione Swagger dei servizi, nel modulo **FRONTEND** è presente la cartella *remote-services* che contiene il risultato di questa generazione ad opera del tool [https://editor.swagger.io](https://editor.swagger.io).
 
 Nella **@Configuration** del tier di api, importeremo la configurazione del tier di business e configureremo la generazione della documentazione Swagger.
 
@@ -117,7 +125,6 @@ public class KissApiConfiguration {
 	    public Docket api() {
 	        return new Docket(DocumentationType.SWAGGER_2)
 	                .select()
-	                //.apis(RequestHandlerSelectors.any())
 	                .apis(RequestHandlerSelectors.basePackage("org.ska.api.web"))
 	                .paths(PathSelectors.any())
 	                .build()
