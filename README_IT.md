@@ -1,7 +1,7 @@
 Springboot with Angular, a kiss architecture
 ============================================
 [![Build Status](https://travis-ci.org/paspao/springboot-kiss-architecture.svg?branch=master)](https://travis-ci.org/paspao/springboot-kiss-architecture)
-[![Coverage Status](https://coveralls.io/repos/github/paspao/springboot-kiss-architecture/badge.svg?branch=master)](https://coveralls.io/github/paspao/springboot-kiss-architecture?branch=master)
+
 
 Like suggested by wikipedia, KISS is an acronym for "Keep it simple, stupid" as a design principle noted by the U.S. Navy in 1960. The KISS principle states that most systems work best if they are kept simple rather than made complicated; therefore simplicity should be a key goal in design, and that unnecessary complexity should be avoided. The phrase has been associated with aircraft engineer Kelly Johnson.
 
@@ -100,7 +100,7 @@ E' l'unico modulo ad avere un legame diretto con DAO ed INTEGRATION, quindi nece
 
 ## API
 
-In questo tier ricade la logica di presentation, rappresenta il punto di ingresso del nostro applicativo, almeno dal punto vista server, in esso infatti vi finiscono tutti i servizi che siano essi di tipo JAX-RS o JAX-WS che quindi hanno principalmente il compito di presentare i dati in XML, JSON o altro. La sua unica forma di comunicazione è verso il tier della BUSINESS LOGIC, un servizio non farà altro che chiamare uno o piu servizi offerti dal layer di Business, non utilizzerà mai il tier di INTEGRATION o DAO, nè tantomeno utilizzerà oggetti definiti al loro interno, questo sempre nell'ottica di evitare hard coupling e spaghetti programming. Inoltre si occuperà di gestire aspetti di autenticazione ed autorizzazione. Le API vanno in qualche modo documentate, SEMPRE: uno dei difetti del mondo REST è proprio l'assenza di un descrittore universale di questi servizi. Una tecnologia che garantisce questo aspetto è **Swagger**, oggi diventata OpenAPI: permette di documentare le API, ma la documentazione prodotta può essere riutilizzata anche per generare la parte client, quindi non solo puramente descrittiva. Ad esempio nel nostro caso il layer di comunicazione con i servizi REST è stato completamente generato dalla descrizione Swagger dei servizi, nel modulo **FRONTEND** è presente la cartella *remote-services* che contiene il risultato di questa generazione ad opera del tool [https://editor.swagger.io](https://editor.swagger.io).
+In questo tier ricade la logica di presentation, rappresenta il punto di ingresso del nostro applicativo, almeno dal punto vista server, in esso sono definiti i servizi che siano essi di tipo JAX-RS o JAX-WS che hanno principalmente il compito di presentare i dati in XML, JSON o altro. La sua unica forma di comunicazione è verso il tier della BUSINESS LOGIC: un servizio non farà altro che chiamare uno o piu servizi offerti dal layer di Business, non utilizzerà mai il tier di INTEGRATION o DAO, nè tantomeno utilizzerà oggetti definiti al loro interno, questo sempre nell'ottica di evitare *tightly coupled* e *spaghetti code*. Inoltre si occuperà di gestire aspetti di autenticazione ed autorizzazione. Le API vanno in qualche modo documentate, SEMPRE: uno dei difetti del mondo REST è proprio l'assenza di un descrittore universale di questi servizi. Una tecnologia che garantisce questo aspetto è **Swagger**, oggi diventata OpenAPI: permette di documentare le API, ma la documentazione prodotta può essere riutilizzata anche per generare la parte client, quindi non solo puramente descrittiva. Ad esempio nel nostro caso il layer di comunicazione con i servizi REST è stato completamente generato dalla descrizione Swagger dei servizi, nel modulo **FRONTEND** è presente la cartella *remote-services* che contiene il risultato di questa generazione ad opera del tool [https://editor.swagger.io](https://editor.swagger.io).
 
 Nella **@Configuration** del tier di api, importeremo la configurazione del tier di business e configureremo la generazione della documentazione Swagger.
 
@@ -139,9 +139,9 @@ public class KissApiConfiguration {
 
 ## FRONTEND
 
-Rappresenta la Single Page Application: questo tipo di applicazione deve essere completamente scissa dall'applicativo e l'utilizzo della tencologia Rest già garantisce questo aspetto ma è necessario prestare attenzione a come viene implementata la comunicazione con i servizi remoti. Spesso mi sono imbattutto in pessime organizzazioni e gestioni dei vari client HTTP utilizzati per invocare i servizi remoti, e mi riferisco alle reference che si trovano lungo tutto l'applicativo, per risolvere questo problema e rendere la SPA strettamente separata da tutto ciò che rappresenta la comunciazione con i servizi remoti, come già detto, utilizzo la tecnologia Swagger per generare uno stub che permetta la comunicazione con l'API Rest. In questo modo, nella mia esperienza, gli sviluppatori utilizzeranno quanto prodotto da Swagger innanzitutto perchè è tanto codice già scritto, con diverse opzioni di utilizzo, non hanno più quindi bisogno di riscreverlo, inoltre gli sviluppatori implementeranno le loro logiche altrove, si limiteranno ad utilizzare quanto prodotto da Swagger, la sezione di comunicazione remota (Stub) sarà continuamente rigenerata e nessuno sviluppatore si sognerà mai di implementare le proprie logiche in sorgenti che potrebbero essere sovrascritti (spero).
+Rappresenta la Single Page Application: questo tipo di applicazione deve essere completamente scissa dall'applicativo e l'utilizzo della tencologia Rest già garantisce questo aspetto ma è necessario prestare attenzione a come viene implementata la comunicazione con i servizi remoti. Spesso mi sono imbattutto in pessime organizzazioni e gestioni dei vari client HTTP utilizzati per invocare i servizi remoti, e mi riferisco alle reference che si trovano lungo tutto l'applicativo, per risolvere questo problema e rendere la SPA strettamente separata da tutto ciò che rappresenta la comunciazione con i servizi remoti, come già detto, utilizzo la tecnologia Swagger per generare uno stub che permetta la comunicazione con l'API Rest. In questo modo gli sviluppatori utilizzeranno quanto prodotto da Swagger, innanzitutto perchè è tanto codice già scritto, con diverse opzioni di utilizzo, non hanno più quindi bisogno di riscreverlo, inoltre le logiche saranno implementate altrove, poichè la sezione di comunicazione remota (Stub) sarà continuamente rigenerata e nessuno sviluppatore si sognerà mai di implementare le proprie logiche in sorgenti che potrebbero essere sovrascritti (spero).
 
-Per garantire che un'applicazione scritta in Angular possa rientrare nel ciclo di building di un progetto Maven, facciamo in modo che anche il **FRONTEND** diventi un modulo Maven, non produrrà nulla infatti sarà un packaging di tipo *pom*, ma questo ci consente di inserirlo nella build di maven e creare delle dipendenze con i suoi fratelli. Per poter integrare una build Angular in un contesto Maven utilizziamo un plugin notot ai più che è il *frontend-maven-plugin*, che permette l'installazione di un'istanza *Node* ed *Npm* e la conseguente invocazione dei task *Node* quali dipendenze e build.
+Per garantire che un'applicazione scritta in Angular possa rientrare nel ciclo di building di un progetto Maven, facciamo in modo che anche il **FRONTEND** diventi un modulo Maven aggiungendo un file *pom.xml*, questo modulo non produrrà un artefatto quindi il packaging sarà di tipo *pom*, questo ci consente di inserirlo nella build di maven e creare delle dipendenze con i suoi fratelli. Per poter integrare una build Angular in un contesto Maven utilizziamo un plugin noto ai più il *frontend-maven-plugin*: permette l'installazione di un'istanza *Node* ed *Npm* e la conseguente invocazione dei task dell'Angular *CLI* per gestire dipendenze e build.
 
 ```xml
 ...
@@ -215,7 +215,7 @@ Per garantire che un'applicazione scritta in Angular possa rientrare nel ciclo d
 ...
 ```
 
-Qaundo verrà invocato il task di build di Angular, verrà invocata la seguente sezione:
+Qaundo verrà invocato il task di build di Npm il controllo verrà preso dalla Angular CLI, come descritto nel *package.json*:
 
 ```json
 ...
@@ -223,7 +223,7 @@ Qaundo verrà invocato il task di build di Angular, verrà invocata la seguente 
 ...
 ```
 
-L'output path è impostato su *dist/resources/static/ui*, ed il path *dist/resources* è configurato anche come *resources* del modulo frontend, unito alla configurazione del tier API che riporto di seguito consente di infilare il risultato della build Angular nell'applicativo Springboot. Nell'output path è infatti presente una directory particolare **.../static/...**, una di quelle in cui Springboot permette di definire contenuti statici dell'applicativo.
+L'output path è impostato su *dist/resources/static/ui*, ed il path *dist/resources* è configurato anche come *resources* del modulo frontend, unito alla configurazione del tier API che riporto di seguito consente di iniettare il risultato della build Angular nell'applicativo Springboot. Nell'output path è infatti presente una directory particolare **.../static/...**, una di quelle in cui Springboot permette di definire contenuti statici dell'applicativo.
 
 
 ```xml
