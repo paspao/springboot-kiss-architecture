@@ -1,4 +1,4 @@
-A "Kiss architecture", implemented with Springboot and Angular, but always valid
+A "Kiss architecture": Springboot + Angular
 ============================================
 [![Build Status](https://travis-ci.org/paspao/springboot-kiss-architecture.svg?branch=master)](https://travis-ci.org/paspao/springboot-kiss-architecture)
 
@@ -25,14 +25,14 @@ L'articolo fa riferimento al progetto scaricabile al link [https://github.com/pa
 git clone https://github.com/paspao/springboot-kiss-architecture
 ```
 
-E' un progetto organizzato utilizzando una struttra **maven** di tipo padre figlio, lo stesso frontend, sviluppato in Angular, viene inserito nella fase di building **maven** per poter creare un unico artefatto, nel paragrafo *FRONTEND* viene spiegato come.
+E' un progetto organizzato utilizzando una struttura **maven** di tipo padre figlio, lo stesso frontend, sviluppato in Angular, viene inserito nella fase di building **maven** per poter creare un unico artefatto, nel paragrafo *FRONTEND* viene spiegato come.
 
 Entrando nei dettagli di ogni tier preferisco utilizzare un approccio di tipo *BottomUp*, partiamo dunque dai dati.
 
 ## DAO
 
-Quando parliamo di applicativi CRUD per prima cosa parliamo di dati, in mondi SQL, NOSQL ma comunque dati da collezionare e trattare. Questo modulo nel mio disegno rappresenta il punto più profondo se lo guardiamo come uno stack di tier, quello che a che fare con i dati nei quali ricade la descrizione delle entità e la logica di accesso. Attenzione semplice logica di accesso ai dati: inserimento, modifica, cancellazione e visualizzazione nulla di più e nulla che la leghi ad altri tier; è il tier più profondo ed anche uno di quelli che non ha dipendenze con nessun altro dei suoi fratelli, non gestisce aspetti specifici dell'applicativo, come autorizzazioni, transazioni o altro: solo ed esclusivamente accesso ai dati.
-In un contesto Springboot utilizziamo tecnologie quali **Entity** e **Repository**, nel dettaglio mostro la **@Configuration** del modulo DAO, *annotation* centrale in ogni applictivo/modulo Springboot.
+Quando parliamo di applicativi CRUD per prima cosa parliamo di dati, in mondi SQL, NOSQL ma comunque dati da collezionare e trattare. Questo modulo nel mio disegno rappresenta il punto più profondo se lo guardiamo come uno stack di tier, quello che ha a che fare con i dati nei quali ricade la descrizione delle entità e la logica di accesso. Attenzione semplice logica di accesso ai dati: inserimento, modifica, cancellazione e visualizzazione nulla di più e nulla che la leghi ad altri tier; è il tier più profondo ed anche uno di quelli che non ha dipendenze con nessun altro dei suoi fratelli, non gestisce aspetti specifici dell'applicativo, come autorizzazioni, transazioni o altro: solo ed esclusivamente accesso ai dati.
+In un contesto Springboot utilizziamo tecnologie quali **Entity** e **Repository**, nel dettaglio mostro la **@Configuration** del modulo DAO, *annotation* centrale in ogni applicativo/modulo Springboot.
 
 ```java
 @Configuration
@@ -69,13 +69,13 @@ public class KissIntegrationConfiguration {
 }
 ```
 
-Qui riporto il punto centrale della configurazione del modulo, in cui c'è solo un riferimento a dove sono definiti i **Serivice** e la creazione di un servizio *third party*.
+Qui riporto il punto centrale della configurazione del modulo, in cui c'è solo un riferimento a dove sono definiti i **Service** e la creazione di un servizio *third party*.
 
 ## BUSINESS LOGIC
 
 Ogni applicativo dopo l'identificazione dei dati da trattare, deve occuparsi della gestione della logica di interazione tra queste entità, coniugare i requisiti utente in logica applicativa, spezzentandoli per poi offrire ai tiers superiori, strumenti dall'utilizzo semplice ed efficace che permettano elaborazioni senza entrare nei dettagli di come è strutturata la banca dati o di quale integrazione vi sia sotto. 
 
-In questo tier inoltre troviamo la definizione e l'utilizzo dei **DTO** che permettono di mascherare i dati che effettivamente sono sulla banca dati o nei vari bean di integrazione: ma perchè? 
+In questo tier inoltre troviamo la definizione e l'utilizzo dei **DTO** (Data Transfer Object) che permettono di mascherare i dati che effettivamente sono sulla banca dati o nei vari bean di integrazione: ma perchè? 
 Le ragioni sono diverse innanzitutto è una forma di protezione, proteggere informazioni che possano essere sensibili (ad esempio dati utente come una password oppure timestamp o informazioni di altra natura necessarie alla coerenza dei dati, ma non all'utente finale). In altre situazioni invece il dato restituito è un dato elaborato, che probabilmente attingerà da più fonti, quindi è necessario strutturare e rendere coerenti questi dati. 
 C'è poi da sottolineare un altro aspetto, la serializzazione dei dati: in alcuni contesti è necessario trasformare le informazioni presenti in banca dati, per renderle fruibili all'uomo, questo ad esempio obbliga gli sviluppatori a "macchiare" con delle logiche di serializzazione le *Entità*, il cui scopo dovrebbe essere  solo quello di rappresentare i dati, non serializzarli, un esempio: il campo DATE sul db magari è un numero, ma all'utente dobbiamo presentare una data leggibile, per farlo utilizziamo delle annotazioni per la formattazione probabilmente, che può essere una soluzione, ma così facendo leghiamo aspetti di serializzazione ad un entità, sul lungo termine questo tipo di soluzione porta all'inusabilità in termini di riutilizzo e illegibilità, Harold Abelson disse *Programs must be written for people to read, and only incidentally for machines to execute*.
 
