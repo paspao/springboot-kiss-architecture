@@ -31,7 +31,7 @@ Entrando nei dettagli di ogni tier preferisco utilizzare un approccio di tipo *B
 
 ## DAO
 
-Quando parliamo di applicativi CRUD per prima cosa parliamo di dati, in mondi SQL, NOSQL ma comunque dati da collezionare e trattare. Questo modulo nel mio disegno rappresenta il punto più profondo se lo guardiamo come uno stack di tier, quello che ha a che fare con i dati nei quali ricade la descrizione delle entità e la logica di accesso. Attenzione semplice logica di accesso ai dati: inserimento, modifica, cancellazione e visualizzazione nulla di più e nulla che la leghi ad altri tier; è il tier più profondo ed anche uno di quelli che non ha dipendenze con nessun altro dei suoi fratelli, non gestisce aspetti specifici dell'applicativo, come autorizzazioni, transazioni o altro: solo ed esclusivamente accesso ai dati.
+Quando parliamo di applicativi CRUD per prima cosa parliamo di dati, in mondi SQL, NOSQL ma comunque dati da collezionare e trattare. Questo modulo nel mio disegno rappresenta il punto più profondo se lo guardiamo come uno stack di tier, quello che ha a che fare con i dati nel quale ricade la descrizione delle entità e la logica di accesso. Attenzione, semplice logica di accesso ai dati: inserimento, modifica, cancellazione e visualizzazione nulla di più e nulla che la leghi ad altri tier; è il tier più profondo ed anche uno di quelli che non ha dipendenze con nessun altro dei suoi fratelli. Non gestisce aspetti specifici dell'applicativo, come autorizzazioni, transazioni o altro: solo ed esclusivamente accesso ai dati.
 In un contesto Springboot utilizziamo tecnologie quali **Entity** e **Repository**, nel dettaglio mostro la **@Configuration** del modulo DAO, *annotation* centrale in ogni applicativo/modulo Springboot.
 
 ```java
