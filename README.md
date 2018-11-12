@@ -5,7 +5,7 @@ A "Kiss architecture": Springboot + Angular
 
 Like suggested by wikipedia, KISS is an acronym for "Keep it simple, stupid" as a design principle noted by the U.S. Navy in 1960. The KISS principle states that most systems work best if they are kept simple rather than made complicated; therefore simplicity should be a key goal in design, and that unnecessary complexity should be avoided. The phrase has been associated with aircraft engineer Kelly Johnson.
 
-In the course of my development experiences I have been able to experiment with various types of technologies, having the possibility to see the development of an application both from the client side (like a SPA or a native App) and from server side. So I tried to develop a simple architecture that involves the respect of fundamental *PATTERNS* in a *CRUD* context. I will try to show the foundations of this architecture, used as a starting point in all my projects.
+In the course of my development experiences I have been able to experiment with various types of technologies, having the possibility to see the development of an application both from the client side (like a SPA or a native App) and from server side. By relying on such experience, I tried to develop a simple architecture that involves the respect of fundamental *PATTERNS* in a *CRUD* context. I will try to show the foundations of this architecture, used as a starting point in all my projects.
 
 Into the designing of this architecture I have tried to keep in mind the KISS concept, and in this perspective I have provided 5 layers also called tiers, with a specific logics of use, namely:
 
@@ -15,7 +15,7 @@ Into the designing of this architecture I have tried to keep in mind the KISS co
 * INTEGRATION
 * DAO
 
-I use a *multi-tier* architectural model, the order used in the list is the same one followed by the flow of information, start from the frontend to get up to the DAO.
+So I use a *multi-tier* architectural model where the tiers order in the list, is strictly associated to the information flow: from the frontend to get up to the DAO
 
 ![Architecture](img/Ska.png)
 
@@ -25,7 +25,7 @@ The article refers to the project downloadable at the link [https://github.com/p
 git clone https://github.com/paspao/springboot-kiss-architecture
 ```
 
-The project is organized using a **maven** structure parent and child type, the same frontend, developed in Angular, is inserted into the **maven** building phase in order to create a single artifact, in the paragraph *FRONTEND* is explained how.
+The project is organized using a **maven** structure (i.e. parent and child types); the same frontend, developed in Angular, is included into the **maven** building phase in order to create a single artifact (further details available in the  *FRONTEND* paragraph below).
 
 Going into the details of each tier I prefer to use a *BottomUp* approach, so let's start with the data.
 
@@ -234,7 +234,7 @@ When the Npm build task is invoked, the control will be taken from the Angular C
 ...
 ```
 
-The output path is set to *dist/resources/static/ui*, and the path *dist/resources* is also configured as *resource* of the frontend module, combined with the configuration of the tier API that follows below it allows to inject the result of the Angular build in the Springboot application. In the output path (of the *build* command in package.json) there is a special directory **.../static/...**, one of those where Springboot allows to define static contents of the application.
+The output path is set to *dist/resources/static/ui*, and the path *dist/resources* is also configured as *resource* of the frontend module, combined with the configuration of the tier API that follows below it allows to inject the result of the Angular build in the Springboot application. In the output path (of the *build* command in package.json) there is a special directory **.../static/...**, one of those where Springboot allows to define static contents.
 
 
 ```xml
