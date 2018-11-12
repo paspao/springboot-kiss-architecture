@@ -152,31 +152,10 @@ public class KissApiConfiguration {
 
 It represents the Single Page Application: this type of application must be completely separated from the application and the usage of the Rest technology already guarantees this aspect but it is necessary to pay attention to how the communications with remote services are implemented. Often I have fallen into very bad organization and management of various HTTP clients used to invoke remote services, and I refer to the references that are found throughout the application, to solve this problem and to make the SPA strictly separate from everything that represents the communicating with remote services, as already mentioned, I use Swagger technology to generate a stub that allows communication with the Rest API. In this way the developers will use what is produced by Swagger, first because it is so much already written code, with different usage options, no longer need to rediscover it, also the logic will be implemented elsewhere, as the remote communication section (Stub) will be continuously regenerated and no developer will ever dream of implementing its own logic in sources that could be overwritten (I hope).
 
-To ensure that an application written in Angular can be included in the building cycle of a Maven project, I ensure that even **FRONTEND** becomes a Maven module by adding a *pom.xml* file. This module will not produce any artifact so the packaging will be of type *pom*, but in this way I can insert insert it into the maven build and create dependencies with its siblings. To be able to integrate an Angular build in a Maven context I use a plugin named *frontend-maven-plugin*: it allows the installation of an *Node* and *Npm* instance and the consequent invocation of the Angular *CLI* to manage dependencies and builds angular side.
+To ensure that an application written in Angular can be included in the building cycle of a Maven project, I ensure that even **FRONTEND** becomes a Maven module by adding a *pom.xml* file. This module will not produce any artifact so the packaging will be of type *pom*, but in this way I can insert it into the maven build and create dependencies with its siblings. To be able to integrate an Angular build in a Maven context I use a plugin named *frontend-maven-plugin*: it allows the installation of an *Node* and *Npm* instance
 
 ```xml
 ...
-<artifactId>frontend</artifactId>
-
-  <packaging>pom</packaging>
-  <build>
-    <resources>
-      <resource>
-        <directory>dist/resources</directory>
-      </resource>
-    </resources>
-    <plugins>
-      <plugin>
-        <groupId>com.github.eirslett</groupId>
-        <artifactId>frontend-maven-plugin</artifactId>
-        <version>1.6</version>
-        <configuration>
-          <nodeVersion>v8.12.0</nodeVersion>
-          <npmInheritsProxyConfigFromMaven>false</npmInheritsProxyConfigFromMaven>
-          <npmVersion>6.4.1</npmVersion>
-
-        </configuration>
-        <executions>
           <execution>
             <id>install node and npm</id>
             <goals>
@@ -190,39 +169,27 @@ To ensure that an application written in Angular can be included in the building
               <goal>npm</goal>
             </goals>
             <configuration>
-
               <arguments>install</arguments>
             </configuration>
           </execution>
+...
+```
+
+ and the consequent invocation of the Angular *CLI* to manage dependencies and builds angular side.
+ 
+
+```xml
+...
           <execution>
             <id>npm build</id>
             <goals>
               <goal>npm</goal>
             </goals>
-
             <phase>generate-resources</phase>
-
             <configuration>
-
               <arguments>run build</arguments>
             </configuration>
           </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>3.1.0</version>
-        <configuration>
-
-          <filesets>
-            <fileset>
-              <directory>dist/resources</directory>
-            </fileset>
-          </filesets>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 ...
 ```
 
