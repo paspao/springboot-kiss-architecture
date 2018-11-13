@@ -7,7 +7,7 @@ Like suggested by wikipedia, KISS is an acronym for "Keep it simple, stupid" as 
 
 In the course of my development experiences I have been able to experiment with various types of technologies, having the possibility to see the development of an application both from the client side (like a SPA or a native App) and from server side. By relying on such experience, I tried to develop a simple architecture that involves the respect of fundamental *PATTERNS* in a *CRUD* context. I will try to show the foundations of this architecture, used as a starting point in all my projects.
 
-Into the designing of this architecture I have tried to keep in mind the KISS concept, and in this perspective I have provided 5 layers also called tiers, with a specific logics of use, namely:
+Into the design of this architecture I have tried to keep in mind the KISS concept, and in this perspective I have provided 5 layers also called tiers, with a specific logics of use:
 
 * FRONTEND
 * API
@@ -31,8 +31,8 @@ Going into the details of each tier I prefer to use a *BottomUp* approach, so le
 
 ## DAO
 
-Data Access Object. When I'm talking about CRUD applications in early step I'm talking about data, in SQL, NOSQL, but in any case datas to collect and process. This module in my drawing represents the deepest point if you look at it as a tier's stack, this tier works with the datas, it describes the entities and the access logic. Caution: simple data access logic of inserting, modifying, deleting and displaying datas, nothing more and nothing binding it to other tiers; it's the deepest tier and also it has no dependencies with any of its brothers, it does not handle specific aspects of the application, such as authorizations, transactions or other: only and exclusively access to datas.
-In a Springboot context I'm using technologies such as **Entity** and **Repository**, in the detail I show you the **@Configuration** of the DAO module, central *annotation* in each Springboot application/module.
+Data Access Object. When I'm talking about CRUD applications in early step I'm talking about data, in SQL, NOSQL, but in any case data to collect and process. This module in my drawing represents the deepest point if you look at it as a tier's stack. This tier works with the data, it describes the entities and the access logic. Caution: simple data access logic of inserting, modifying, deleting and displaying data, nothing more and nothing binding it to other tiers; it's the deepest tier and also it has no dependencies with any of its brothers, it does not handle specific aspects of the application, such as authorizations, transactions or other: only and exclusively access to data.
+In a Springboot context I'm using technologies such as **Entity** and **Repository**. In detail I show you the **@Configuration** of the DAO module, central *annotation* in each Springboot application/module.
 
 
 ```java
@@ -53,7 +53,7 @@ So I define where the *Components* are located by specifying where the Entities 
 
 ## INTEGRATION
 
-Usually the simple CRUD data management is not enough, we probably need to talk with other systems that don't depend on our datas, such as JAX-WS or JAX-RS services, or specific printing systems with different protocols, etc. This component includes all these interactions/integrations without a specific binding to the application's context to guarantee you a very high ability of reusing, like the DAO module also this tier is leaf type.
+Usually the simple CRUD data management is not enough: we probably need to talk with other systems that don't depend on our datas, such as JAX-WS or JAX-RS services, or specific printing systems with different protocols, etc. This component includes all these interactions/integrations without a specific binding to the application's context in order to guarantee you a very high ability of reusing (like the DAO module, this tier is leaf type).
 
 ```java
 @Configuration
@@ -74,19 +74,19 @@ Here I report the central point of the module configuration, there is only one r
 
 ## BUSINESS LOGIC
 
-Each application, after the identification of the datas to be processed, must deal with the logic of interaction between these entities, combining user requirements in application logic, breaking them up and then exposing to the upper tiers *signature* with simple and effective usage, in this way this tier allows processing without enter into the details of how the database is structured or what integration is underneath.
+Each application, after the identification of the data to be processed, must deal with the logic of interaction between these entities, combining user requirements in application logic, breaking them up and then exposing to the upper tiers *signature* with simple and effective usage. In this way this tier allows processing without entering into the details of how the database is structured or what integration is underneath.
 
-Here we also find the definition and usage of **DTO** allowing the system to mask the data that actually are in the database system or in the various integration beans: but why?
-The reasons are different first and foremost is a form of protection, protecting information that may be sensitive (for example, user data such as a password or timestamp or other information necessary for data consistency, but not to the end user). In other situations, instead, the data returned is an elaborated datum, which will probably draw from multiple sources, so it is necessary to structure and make these data in coherent way.
-Then there is another aspect, the serialization of datas: in some contexts it is necessary to transform the information present in the database, to make it usable to humans, in this way the developers are obliges to "stain" with serialization logics the *Entities*, whose purpose should be only to represent the data, no  serializing, an example: the DATE field on the database system is perhaps a number, but we must present a readable date, to do so we use annotations for the formatting probably, it's a solution, but by doing so we link aspects of serialization to an entity, in the long run this kind of solution leads to the usability in terms of reuse and illegibility, Harold Abelson said *Programs must be written for people to read , and only incidentally for machines to execute*.
+Here we also find the definition and usage of **DTO**, allowing the system to mask the data that actually are in the database system or in the various integration beans: but why?
+The reasons are different: first and foremost is a form of information protection that may be sensitive (for example, user data such as a password or timestamp or other information necessary for data consistency, but not to the end user). In other situations, instead, the data returned is an elaborated datum, which will probably draw from multiple sources, so it is necessary to structure and make these data in coherent way.
+Another aspect is the serialization of data: in some contexts it is necessary to transform the information present in the database, to make it usable to humans. In this way the developers have to "stain" the *Entities* with serialization logics, whose purpose should be only to represent the data, no  serializing, for example: the DATE field on the database system is perhaps a number, but we must present a readable date, probably we use annotations for the formatting, that is a solution, but in this way we link aspects of serialization to an entity, in the long run this kind of solution leads to the usability in terms of reuse and illegibility, Harold Abelson said *Programs must be written for people to read , and only incidentally for machines to execute*.
 
 The DTOs allow to face the problems listed, creating a sort of "buffer", consequently more *loosely coupled* and more reusability.
 
-Summing up the BUSINESS LOGIC communicates with the DAO tier and the INTEGRATION tier, creating synergy and interaction between them, in addition it adds logic and data transformation in DTO usable by other tiers. Attention: the business logic tier uses DTO defined within and the same applies to the data returned, they are *NEVER* objects defined in other tiers, this to ensure the above and always have the ability to act on what was returned.
+Summing up, the BUSINESS LOGIC communicates with the DAO tier and the INTEGRATION tier, creating synergy and interaction between them. In addition it adds logic and data transformation in DTO usable by other tiers. Attention: the business logic tier uses DTO defined within and the same applies to the data returned. They are *NEVER* objects defined in other tiers, this to ensure the above and always have the ability to act on what was returned.
 
-Another feature of this tier is the management of transactions: implementing business logic is able to determine whether an operation on the data can be successful or not, therefore define the "transactionality" of the operation.
+Another feature of this tier is the management of transactions: implementing business logic is able to determine whether an operation on the data can be successful or not, therefore defines the "transactionality" of the operation.
 
-Following is the **@Configuration** of the tier business logic:
+Here is the **@Configuration** of the business logic tier:
 
 ```java
 @Configuration
@@ -150,9 +150,9 @@ public class KissApiConfiguration {
 
 ## FRONTEND
 
-It represents the Single Page Application: this type of application must be completely separated from the application and the usage of the Rest technology already guarantees this aspect but it is necessary to pay attention to how the communications with remote services are implemented. Often I have fallen into very bad organization and management of various HTTP clients used to invoke remote services, and I refer to the references that are found throughout the application, to solve this problem and to make the SPA strictly separate from everything that represents the communicating with remote services, as already mentioned, I use Swagger technology to generate a stub that allows communication with the Rest API. In this way the developers will use what is produced by Swagger, first because it is so much already written code, with different usage options, no longer need to rediscover it, also the logic will be implemented elsewhere, as the remote communication section (Stub) will be continuously regenerated and no developer will ever dream of implementing its own logic in sources that could be overwritten (I hope).
+It represents the Single Page Application: this type of application must be completely separated from the application and the usage of the Rest technology already guarantees this aspect, but it is necessary to pay attention to how the communications with remote services are implemented. Often I have fallen into very bad organization and management of various HTTP clients used to invoke remote services, and I refer to the references that are found throughout the application. To solve this problem and to make the SPA strictly separated from everything that represents the communicating with remote services, as already mentioned, I use Swagger technology to generate a stub that allows communication with the Rest API. In this way the developers will use what is produced by Swagger, first because it is so much already written code, with different usage options, no longer need to rediscover it. Also the logic will be implemented elsewhere, as the remote communication section (Stub) will be continuously regenerated and no developer will ever dream of implementing its own logic in sources that could be overwritten (I hope).
 
-To ensure that an application written in Angular can be included in the building cycle of a Maven project, I ensure that even **FRONTEND** becomes a Maven module by adding a *pom.xml* file. This module will not produce any artifact so the packaging will be of type *pom*, but in this way I can insert it into the maven build and create dependencies with its siblings. To be able to integrate an Angular build in a Maven context I use a plugin named *frontend-maven-plugin*: it allows the installation of an *Node* and *Npm* instance
+To ensure that an application written in Angular can be included in the building cycle of a Maven project, I ensure that even **FRONTEND** becomes a Maven module by adding a *pom.xml* file. This module will not produce any artifact so the packaging will be of type *pom*, but in this way I can insert it into the maven build and create dependencies with its siblings. To be able to integrate an Angular build in a Maven context, I use a plugin named *frontend-maven-plugin*: it allows the installation of a *Node* and *Npm* instance
 
 ```xml
 ...
@@ -201,7 +201,7 @@ When the Npm build task is invoked, the control will be taken from the Angular C
 ...
 ```
 
-The output path is set to *dist/resources/static/ui*, and the path *dist/resources* is also configured as *resource* of the frontend module, combined with the configuration of the tier API that follows below it allows to inject the result of the Angular build in the Springboot application. In the output path (of the *build* command in package.json) there is a special directory **.../static/...**, one of those where Springboot allows to define static contents.
+The output path is set to *dist/resources/static/ui*, and the path *dist/resources* is also configured as *resource* of the frontend module. Combined with the configuration of the tier API that follows below, it allows to inject the result of the Angular build in the Springboot application. In the output path (of the *build* command in package.json) there is a special directory **.../static/...**, one of those where Springboot allows to define static contents.
 
 
 ```xml
