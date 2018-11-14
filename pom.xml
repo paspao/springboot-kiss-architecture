@@ -29,6 +29,11 @@
     <maven.build.timestamp.format>dd-MM-yyyy HH:mm</maven.build.timestamp.format>
   </properties>
 
+  <scm>
+        <connection>scm:git:git://github.com/paspao/springboot-kiss-architecture.git</connection>
+        <developerConnection>scm:git:git@github.com:paspao/springboot-kiss-architecture.git</developerConnection>
+        <url>https://github.com/paspao/springboot-kiss-architecture</url>
+  </scm>
   <modules>
     <module>api</module>
     <module>business</module>
