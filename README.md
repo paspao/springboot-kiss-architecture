@@ -5,9 +5,9 @@ A "Kiss architecture": Springboot + Angular
 
 Like suggested by wikipedia, KISS is an acronym for "Keep it simple, stupid" as a design principle noted by the U.S. Navy in 1960. The KISS principle states that most systems work best if they are kept simple rather than made complicated; therefore simplicity should be a key goal in design, and that unnecessary complexity should be avoided. The phrase has been associated with aircraft engineer Kelly Johnson.
 
-In the course of my development experiences, I have been able to experiment with various types of technologies, having the possibility to see the development of an application both from the client side (which can be a SPA or a native App) and from server side. By relying on such experience, I tried to develop a simple architecture that involves the respect of fundamental **PATTERN** in a **CRUD** context. I will try to illustrate the foundations of this architecture, used as a starting point in all my projects.
+In my experience, I worked on various types of technologies, having the opportunity to inspect the source code and, in general, the development of an application both from the client side (which can be a SPA or a native App) and from server side. By relying on such experience, I tried to develop a simple architecture that involves the respect of fundamental **PATTERN** in a **CRUD** context. I will try to illustrate the foundations of this architecture, used as a starting point in all my projects.
 
-Into the design of this architecture I have tried to keep in mind the KISS concept, and in this perspective I have provided 5 layers also called tiers, with a specific logics of use:
+Into the design I kept in mind the KISS concept and in this perspective I would provide 5 layers as known as tiers, with a specific accomplishment task:
 
 * FRONTEND
 * API
@@ -25,15 +25,15 @@ The article refers to the project downloadable at the link [https://github.com/p
 git clone https://github.com/paspao/springboot-kiss-architecture
 ```
 
-The project is organized using a *maven* structure (i.e. parent and child types); even the frontend, developed in Angular, is included into the *maven* building phase in order to create a single artifact (further details available in the **FRONTEND** paragraph below).
+The project is managed using *maven* (i.e. parent and child types); even the frontend, developed in Angular, is included into the *maven* building phase in order to create a single artifact (further details available in the **FRONTEND** paragraph below).
 
-Going into the details of each tier, I prefer to use a *BottomUp* approach, so let’s start with the data.
+Trill down each tier, I prefer to use a *BottomUp* approach. Let’s start with the data.
 
 
 ## DAO
 
-Data Access Object. When I’m talking about CRUD applications in early step I’m talking about data, in SQL, NOSQL, but in any case data to collect and process. This module in my drawing represents the deepest point if you look at it as a tier’s stack. This tier works with the datas, it describes the entities and the access logic. Caution: simple data access logic of inserting, modifying, deleting and displaying data, without any binding to other tiers; it’s the deepest tier and also it has no dependencies with any of its brothers, it does not handle specific aspects of the application, such as authorizations, transactions or other: only and exclusively access to data.
-In a Springboot context I’m using technologies such as **Entity** and **Repository*. In detail I show you the *@Configuration* of the DAO module, central *annotation* in each Springboot application/module.
+Data Access Object. When I’m talking about CRUD applications in early step I’m talking about data, in SQL, NOSQL, but in any case data to collect and process. This module represents the deepest point. This tier performs the data, it describes the entities and the access logic. Caution: simple data access logic of inserting, modifying, deleting and displaying data, without any binding to other tiers; it’s the deepest tier and also it has no dependencies with any of its brothers, it does not handle specific aspect of the application, such as authorizations, transactions or other: just access to data exclusively, as well.
+In a Springboot context I’m performing **Entity** and **Repository* paradigms. In detail I show you the *@Configuration* of the DAO module, central *annotation* in each Springboot application/module.
 
 
 ```java
@@ -47,14 +47,14 @@ public class KissDaoConfiguration {
 }
 ```
 
-So I define where the *Components* are located by specifying where the Entities and Repository are packaged. In addition I enable transactions, so anyone using the DAO module will not have to worry about aspects of configuring the DAO module.
+So I define where the *Components, Entities* and *Repositories* are located. In addition I enable transactions, so anyone using the DAO module will not have to worry about aspects of configuring the DAO module.
 
 
 
 
 ## INTEGRATION
 
-Usually the simple CRUD data management is not enough: we probably need to talk with other systems that don’t depend on our data, such as JAX-WS or JAX-RS services, or specific printing systems with different protocols, etc. This component includes all these interactions/integrations without a specific binding to the application’s context in order to guarantee you a very high reusability (like the DAO module, also this tier is leaf type).
+The simple CRUD data management is not enough: we probably need to interoperate with other systems that don’t depend on our data, such as JAX-WS or JAX-RS services, or specific printing systems with different protocols, etc. This component includes all these interactions/integrations without a specific binding to the application’s context in order to guarantee you a very high reusability (like the DAO module, also this tier is leaf type).
 
 ```java
 @Configuration
@@ -75,11 +75,11 @@ Here I report the central point of the module configuration: there is only one r
 
 ## BUSINESS LOGIC
 
-Each application, after the identification of the data to be processed, must deal with the logic of interaction between entities defined into the DAO tier. You have to combine user requirements with application logic, break them up and then expose to the upper tiers simple and readable *signatures*. So this tier lets developers to make some processing without entering into the details of how the database is structured or what integration is underneath.
+Later of the identification of the data to be processed, each application has to deal with the logic of interaction between entities defined into the DAO tier. You have to combine user requirements with application logic, break them up and then expose to the upper tiers simple and readable *signatures*. So this tier lets developers to make some processing without entering into the details of how the database is structured or what integration is underneath.
 
-Also we find here the definition and usage of **DTO** useful to mask the data that are in the database system or in the various integration beans: but why?
-There are many reasons: first and foremost it is a form of information hiding for sensitive data (for example password, timestamp or other informations needed for data consistency, but no to the end user). Instead, if the returned data needs to be elaborated (like data combined from multiple sources), DTO helps to structure these data in a coherent way.
-Another aspect is the serialization of data: in some contexts it is necessary to transform the information present in the database, to make it usable to humans. So the developers have to “stain” the *Entities* with serialization logics, whose purpose should be only to represent the data, for example: the DATE field on the database system is perhaps a number, but we must represent it in a readable way, so probably we will use a formatting annotation; that’s a solution! but in this way we will link aspects of serialization to an entity, and in the long run this solution will leads to unusable codes. Harold Abelson said: *Programs must be written for people to read , and only incidentally for machines to execute*.
+We find here the definition and usage of **DTO** useful to mask the data stored in the database system or in the various integration beans: why?
+There are some reasons: first and foremost it is a form of information hiding for sensitive data (for example password, timestamp or other informations needed for data consistency, but no to the end user). Instead, if the returned data needs to be elaborated (like data combined from multiple sources), DTO helps to structure these data in a suitable way.
+Another aspect is the serialization of data: in some context you have to transform the information present in the database, to make it usable to humans. So the developers have to “stain” the *Entities* with serialization logics, whose purpose should be only to represent the data, for example: the DATE field on the database system may be a number, but we represent it in a printable way, so probably we will use a formatting annotation; that’s a solution! but in this case we will link aspects of serialization to an entity, and in the long run this solution will leads to unusable codes. Harold Abelson said: *Programs must be written for people to read , and only incidentally for machines to execute*.
 
 The DTOs allow to face the problems listed, creating something like a "buffer", consequently more *loosely coupled* and more reusability.
 
