@@ -85,7 +85,7 @@ public class ContactService {
 
 	}
 	
-	public void deleteContct(Integer moduloId) {
+	public void deleteContact(Integer moduloId) {
     	
     	contactDao.deleteById(moduloId);
     	

@@ -37,7 +37,8 @@ export class AddContactComponent implements OnInit {
     contact.birthPlace = this.addForm.value['birthPlace'];
     contact.country = this.addForm.value['country'];
     const date: Date = new Date(this.addForm.value['birthDate']);
-    contact.dateOfBirth = date.toLocaleDateString();
+    contact.dateOfBirth = date.toISOString();
+    //contact.dateOfBirth="03/11/1992";
     contact.gender = this.addForm.value['gender'];
     contact.email = this.addForm.value['email'];
     contact.phoneNumber = this.addForm.value['phoneNumber'];
@@ -51,5 +52,7 @@ export class AddContactComponent implements OnInit {
     }, error => {
     });
   }
+
+
 
 }

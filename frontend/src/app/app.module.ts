@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 
 import { ApiModule } from "./remote-services";
-
+import {HttpClientModule} from "@angular/common/http";
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import {ContactRoutingModule} from "./contact-routing.module";
@@ -18,6 +18,7 @@ import {ContactRoutingModule} from "./contact-routing.module";
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     ApiModule,
     ContactRoutingModule
   ],

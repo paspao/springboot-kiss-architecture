@@ -1,0 +1,27 @@
+<div class="topnav">
+  <a class="active">Find contact by ID </a>
+  <button (click)="find()">Find</button>
+
+  <input type="number" placeholder="Search.." [(ngModel)]="condition">
+
+</div>
+<div *ngIf="contact as value; else elseBlock">
+  <h4>The contact with id <strong>{{condition}}</strong> is:</h4>
+  <h2>   {{value.firstName}}   {{value.lastName}}  </h2>
+  <h6>Date of birth:   <strong> {{value.dateOfBirth}}</strong>
+  </h6>
+  <h6>Birth place:    <strong>{{value.birthPlace}}</strong>
+  </h6>
+  <h6>Country:    <strong>{{value.country}}</strong>
+  </h6>
+  <h6>Address:    <strong>{{value.address}}</strong>
+  </h6>
+  <h6>Email:   <strong> {{value.email}}</strong>
+  </h6>
+  <h6>Phone number:   <strong> {{value.phoneNumber}}</strong>
+  </h6>
+
+
+
+</div>
+<ng-template #elseBlock>There isn't a contact with this id</ng-template>

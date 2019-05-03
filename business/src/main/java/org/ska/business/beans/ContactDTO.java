@@ -1,25 +1,25 @@
 package org.ska.business.beans;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Created by <a href="mailto:pasquale.paola@eng.it">Pasquale Paola</a> on 29/10/18.
  */
 public class ContactDTO implements Serializable {
 
-
     private Integer id;
 
     private String firstName;// Nome
 
-    private String birthPlace;// Comune di nascita
 
     private String lastName;// Cognome
+    private String birthPlace;
 
-    @JsonFormat(pattern="dd/MM/yyyy")
     private LocalDate dateOfBirth;// Data di nascita
 
     private String country;// Nazione di nascita

@@ -79,5 +79,33 @@ public class ContactController {
 
 
 
+	@ApiOperation(value = "Delete contact", response = Void.class)
+	@RequestMapping(value ="/contatti/{id}",produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.DELETE)
+	public  @ResponseBody
+	ResponseEntity<?>  deleteContact(@PathVariable int id) {
+		ResponseEntity<?> responseEntity=null;
+		contactService.deleteContact(id);
+		responseEntity = new ResponseEntity<Void>( HttpStatus.OK);
+		return responseEntity;
+	}
+
+
+	@ApiOperation(value = "Find contact", response = ContactDTO.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 404, message = "No contacts",response= ErrorMessage.class)
+	})
+	@RequestMapping(value ="/contatti/{id}",produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
+	public  @ResponseBody
+	ResponseEntity<?>  findContact(@PathVariable int id) {
+		ResponseEntity<?> responseEntity=null;
+		ContactDTO contact=null;
+		contact=contactService.findById(id);
+		if(contact==null)
+			responseEntity = new ResponseEntity( HttpStatus.NOT_FOUND);
+		else
+			responseEntity = new ResponseEntity<ContactDTO>(contact, HttpStatus.OK);
+
+		return responseEntity;
+	}
 
 }

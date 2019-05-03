@@ -11,7 +11,7 @@
  */
 
 
-export interface ContactDTO {
+export interface ContactDTO { 
     address?: string;
     birthPlace?: string;
     country?: string;
