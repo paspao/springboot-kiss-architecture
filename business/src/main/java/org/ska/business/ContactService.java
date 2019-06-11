@@ -60,9 +60,11 @@ public class ContactService {
 
 
 
-	public ContactDTO createContact(ContactDTO contact) {
+	public ContactDTO createContact(ContactDTO contact) throws KissBusinessException {
 		Contact mod=null;
 		ContactDTO result=null;
+		if(contact==null)
+			throw new KissBusinessException("Contact cannot be null");
 		contact.setId(null);
 		mod=dozerBeanMapper.map(contact,Contact.class);
 		// Test address geocodeService.geocode()
