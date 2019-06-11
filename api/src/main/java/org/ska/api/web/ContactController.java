@@ -14,6 +14,7 @@ import org.ska.api.util.UtilsWeb;
 import org.ska.api.web.beans.ErrorMessage;
 import org.ska.business.ContactService;
 import org.ska.business.beans.ContactDTO;
+import org.ska.business.exceptions.KissBusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,9 +71,18 @@ public class ContactController {
 	ResponseEntity<?> saveContact(@RequestBody ContactDTO contact){
 		ResponseEntity<?> responseEntity=null;
 
-		ContactDTO insertedContact=contactService.createContact(contact);
+		ContactDTO insertedContact= null;
+		try {
+			insertedContact = contactService.createContact(contact);
+			responseEntity = new ResponseEntity<ContactDTO>(insertedContact, HttpStatus.OK);
+		} catch (KissBusinessException e) {
+			logger.error("Error saving: {}",e.getMessage(),e);
+			ErrorMessage errorMessage=new ErrorMessage();
+			errorMessage.setMessage(e.getMessage());
+			responseEntity=new ResponseEntity<ErrorMessage>(errorMessage,HttpStatus.BAD_REQUEST);
+		}
 
-		responseEntity = new ResponseEntity<ContactDTO>(insertedContact, HttpStatus.OK);
+
 
 		return responseEntity;
 	}
