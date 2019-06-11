@@ -1,7 +1,7 @@
 package org.ska.api.web;
 /**
  * 
- * @author nikola
+ * Created by <a href="mailto:pasquale.paola@eng.it">Pasquale Paola</a> on 08/10/18.
  *
  */
 
@@ -28,7 +28,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/contacts")
-@Api(value="/api/contacts", description = "Contacts Management")
+@Api(value="/api/contacts", tags="Contacts")
 public class ContactController {
 
 	private static final Logger logger = LoggerFactory.getLogger(ContactController.class);
