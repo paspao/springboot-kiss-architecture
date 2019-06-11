@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ska.business.beans.ContactDTO;
 import org.ska.business.configuration.KissBusinessConfiguration;
+import org.ska.business.exceptions.KissBusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
@@ -24,14 +25,14 @@ public class ContactBusinessMockTest {
 
 	
 	@Test
-	public void testFindAllContacts() {
+	public void testFindAllContacts() throws KissBusinessException {
 		ContactDTO contact=new ContactDTO();
 		contactService.createContact(contact);
 		Assert.notEmpty(contactService.findAll());
 	}
 
 	@Test
-	public void testInsertContact(){
+	public void testInsertContact() throws KissBusinessException {
 		ContactDTO contact=new ContactDTO();
 		contact=contactService.createContact(contact);
 		Assert.notNull(contact.getId());
