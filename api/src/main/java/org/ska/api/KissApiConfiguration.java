@@ -32,6 +32,7 @@ public class KissApiConfiguration {
 	                .apis(RequestHandlerSelectors.basePackage("org.ska.api.web"))
 	                .paths(PathSelectors.any())
 	                .build()
+					.useDefaultResponseMessages(false)
 	                .apiInfo(apiInfo());
 	    }
 
