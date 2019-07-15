@@ -1,0 +1,19 @@
+version: '3.2'
+services:
+
+  kiss-httpd:
+    image: kiss-httpd
+    ports:
+      - 80:80
+    depends_on:
+      - kiss-main-service
+    networks:
+      - kiss
+
+  kiss-main-service:
+    image: kiss-main-service
+    networks:
+      - kiss
+
+networks:
+  kiss:

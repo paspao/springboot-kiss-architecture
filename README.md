@@ -240,3 +240,18 @@ java -jar api/target/api-0.0.1-SNAPSHOT.jar
 
 Got to url [http://localhost:8080/kiss/](http://localhost:8080/kiss/)
 
+Build Docker
+============
+
+```bash
+docker build --target=kiss-main-service -t kiss-main-service .
+docker build --target=kiss-httpd -t kiss-httpd .
+```
+
+Run Docker
+==========
+
+```bash
+docker-compose up
+```
+
