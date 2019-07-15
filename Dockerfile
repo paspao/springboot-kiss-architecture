@@ -5,7 +5,6 @@ LABEL maintainer="Pasquale Paola <pasquale.paola@gmail.com>"
 WORKDIR /app
 #COPY settings.xml /root/.m2/
 COPY ./ /app/
-RUN ls -la
 RUN  --mount=type=cache,target=/root/.m2 mvn  -e -B package
 
 FROM adoptopenjdk/openjdk8-openj9:$openjdkversion as kiss-main-service
