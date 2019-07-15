@@ -3,7 +3,7 @@ ARG openjdkversion=alpine
 FROM adoptopenjdk/maven-openjdk8-openj9 as builder
 LABEL maintainer="Pasquale Paola <pasquale.paola@gmail.com>"
 WORKDIR /app
-COPY settings.xml /root/.m2/
+#COPY settings.xml /root/.m2/
 COPY ./ /app/
 RUN ls -la
 RUN  --mount=type=cache,target=/root/.m2 mvn  -e -B package
